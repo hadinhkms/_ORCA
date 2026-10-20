@@ -14,6 +14,10 @@ vi.mock('./authenticated-request', () => ({
   jiraRequest,
   JiraApiError: class extends Error {}
 }))
+vi.mock('./jira-agile-fields', () => ({
+  getAgileFieldIds: async () => ({}),
+  agileFieldIdList: () => []
+}))
 vi.mock('./request-queue', () => ({ acquire: vi.fn(), release: vi.fn() }))
 
 function site(id: string, authType: 'cloud' | 'server' = 'cloud'): JiraClientForSite {
@@ -65,6 +69,22 @@ describe('Jira preset filters', () => {
     getClients.mockReturnValue([site('cloud')])
     jiraRequest.mockReset()
   })
+  it('keeps Cloud All project bounds when combining workflow statuses and current sprint', async () => {
+    jiraRequest.mockImplementation(async (_entry, path, init) => {
+      if (path.startsWith('/rest/api/3/project/search')) {
+        return { values: [{ id: '1', key: 'ABC', name: 'Example' }], isLast: true }
+      }
+      expect(requestJql(init)).toBe(
+        'project in ("1") AND statusCategory != Done AND status in ("Blocked") AND sprint in openSprints() ORDER BY updated DESC'
+      )
+      return { issues: [] }
+    })
+    const { listIssues } = await import('./jira-issue-search')
+    await expect(
+      listIssues('all', 20, 'cloud', false, { statuses: ['Blocked'], currentSprint: true })
+    ).resolves.toEqual([])
+    expect(jiraRequest).toHaveBeenCalledTimes(2)
+  })
 
   it.each<JiraIssueFilter>(['assigned', 'reported', 'done'])(
     '%s follows status when resolution is stale',
@@ -115,6 +135,23 @@ describe('Jira preset filters', () => {
       { key: 'ALP-2', updatedAt: '2020-01-01' }
     ])
     expect(jiraRequest).toHaveBeenCalledTimes(3)
+  })
+
+  it('composes multi-status filters inside the bounded Cloud All query', async () => {
+    jiraRequest.mockImplementation(async (_entry, path, init) => {
+      if (path.includes('/project/search')) {
+        return { isLast: true, values: [{ id: '10', key: 'APP' }] }
+      }
+      expect(requestJql(init)).toBe(
+        'project in ("10") AND statusCategory != Done AND status in ("Blocked", "In Progress") ORDER BY updated DESC'
+      )
+      return { issues: [issue('APP-1', false, false)] }
+    })
+    const { listIssues } = await import('./jira-issue-search')
+    await expect(
+      listIssues('all', 20, 'cloud', true, { statuses: ['Blocked', 'In Progress'] })
+    ).resolves.toMatchObject([{ key: 'APP-1' }])
+    expect(jiraRequest).toHaveBeenCalledTimes(2)
   })
 
   it('keeps Server/DC All on classic search without project discovery', async () => {

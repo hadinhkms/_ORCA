@@ -9,11 +9,8 @@ import { forgetHugeRepoWarningDismissalsForWorktrees } from '@/lib/source-contro
 import { forgetWorktreeSleepIntent } from '@/lib/worktree-sleep-intent'
 import { readIpcErrorDetail } from '@/lib/ipc-error'
 import { isArchiveHookRemovalError } from '../../../../../../shared/worktree/archive-hook-removal-gate'
-import { showPreservedBranchToast } from '@/components/sidebar/preserved-branch-toast'
-import {
-  resolveWorktreeOperationRouteResult,
-  resolveWorktreeOperationRouteResultForHost
-} from '@/lib/worktree-operation-route'
+import { resolveWorktreeOperationRouteResultForHost } from '@/lib/worktree-operation-route'
+import { resolveWriteRouteResult } from '@/lib/resolve-owner'
 import {
   beginHostQualifiedRemoval,
   completeSameIdHostScopedRemoval,
@@ -28,7 +25,7 @@ import {
   isLockedWorktreeRemovalError
 } from '../../../../../../shared/worktree/removal'
 import { preservedBranchCleanupKey } from '../../../../../../shared/preserved-branch-cleanup'
-import { composeWorktreeHostIdentity } from '../../../../../../shared/worktree/host-qualified-identity'
+import { getWorktreeDeleteStateKey } from './worktree-delete-state'
 import { pruneHostedReviewLinkMutationGenerations } from '../metadata/hosted-review-link-mutation'
 import { rememberAuthoritativelyRemovedWorktrees } from '../listing/authoritative-worktree-removal-memory'
 import { preservedBranchRuntimeTargetByCleanupKey } from './preserved-branch-cleanup-target'
@@ -42,6 +39,7 @@ import { dispatchWorktreeRemoval } from './dispatch-worktree-removal'
 import { tearDownRemovedWorktreeRendererState } from './removed-worktree-renderer-teardown'
 import { captureWorktreeStateBeforeRemoval } from './worktree-state-before-removal'
 import { resolveWorktreeRemovalPreference } from './worktree-removal-preference'
+import { completePreservedBranchCleanup } from './complete-preserved-branch-cleanup'
 
 export function createRemoveWorktree(
   set: WorktreeSliceSet,
@@ -74,9 +72,7 @@ export function createRemoveWorktree(
     } = start
     const sameIdSurvivingHostId =
       catalogSameIdSurvivingHostId ?? options?.sameIdSurvivingHostId ?? null
-    const deleteStateKey = requiredExecutionHostId
-      ? composeWorktreeHostIdentity(requiredExecutionHostId, worktreeId)
-      : worktreeId
+    const deleteStateKey = getWorktreeDeleteStateKey(get(), worktreeId, requiredExecutionHostId)
     set((s) => ({
       deleteStateByWorktreeId: {
         ...s.deleteStateByWorktreeId,
@@ -143,7 +139,7 @@ export function createRemoveWorktree(
           // Missing means stale mirror; ambiguous or changed ownership must fail closed.
           const currentResolution = requiredExecutionHostId
             ? resolveWorktreeOperationRouteResultForHost(get(), worktreeId, requiredExecutionHostId)
-            : resolveWorktreeOperationRouteResult(get(), worktreeId)
+            : resolveWriteRouteResult(get(), worktreeId)
           if (currentResolution.kind === 'ambiguous') {
             throw error
           }
@@ -227,10 +223,11 @@ export function createRemoveWorktree(
       }
 
       const worktreeDisplayName = worktreeBeforeRemoval?.displayName?.trim()
-      if (worktreeDisplayName) {
+      if (worktreeDisplayName && hostId) {
         try {
           await window.api.automations?.snapshotWorkspaceName?.({
             workspaceId: worktreeId,
+            hostId,
             displayName: worktreeDisplayName
           })
         } catch (error) {
@@ -268,18 +265,22 @@ export function createRemoveWorktree(
           target
         })
       }
-      if (preservedBranch && options?.suppressPreservedBranchToast !== true) {
-        showPreservedBranchToast(removalResult, worktreeBeforeRemoval, (branch, expectedHead) => {
-          void get().forceDeletePreservedBranch(worktreeId, branch, expectedHead, {
-            ...(hostId ? { hostId } : {}),
-            ...(removalRoute?.runtimeEnvironmentId
-              ? { runtimeEnvironmentId: removalRoute.runtimeEnvironmentId }
-              : {})
-          })
-        })
+      const branchCleanupOptions = {
+        ...(hostId ? { hostId } : {}),
+        ...(removalRoute?.runtimeEnvironmentId
+          ? { runtimeEnvironmentId: removalRoute.runtimeEnvironmentId }
+          : {})
       }
+      const autoDeletedBranch = await completePreservedBranchCleanup({
+        get,
+        worktreeId,
+        removalResult,
+        worktreeBeforeRemoval,
+        branchCleanupOptions,
+        suppressToast: options?.suppressPreservedBranchToast === true
+      })
       pruneHostedReviewLinkMutationGenerations([worktreeId])
-      return preservedBranch && cleanup
+      return preservedBranch && cleanup && !autoDeletedBranch
         ? {
             ok: true as const,
             preservedBranch: {
