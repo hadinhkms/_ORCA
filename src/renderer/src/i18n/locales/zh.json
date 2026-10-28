@@ -5928,10 +5928,8 @@
           "oneWorkspace": "1 个工作区",
           "manyWorkspaces": "{{count}} 个工作区",
           "hostHasWorkspacesDefault": "从此计算机移除 {{value0}} 及其凭据。其 {{value1}} 保留在 Orca 中 — 远程文件不会被删除。",
-          "alsoDeleteRemote": "同时在 {{value1}} 上删除这些 {{value0}}",
           "alsoForgetLocal": "同时从 Orca 中移除这些 {{value0}}",
           "advanced": "高级",
-          "alsoDeleteRemoteHint": "永久删除远程 Git 工作树及其分支。此操作不可撤销。",
           "alsoForgetLocalHint": "仅从 Orca 中清除。远程文件、工作树和分支均不受影响。",
           "wslHostEndsTerminalsUnlessShared": "从 Orca 中移除 {{value0}}。除非此计算机上打开的另一个 Orca 正在使用它，否则还会结束其打开的终端，并停止该发行版中的 Orca 服务器。发行版中的文件不受影响。"
         },
@@ -6087,14 +6085,9 @@
           "sshImportSyncedSingular": "已将 {{count}} 个主机添加到 Orca。"
         },
         "ForgetSshWorkspaceDialog": {
-          "reconnectFailed": "重新连接失败",
-          "forgetBody": "仅从 Orca 中移除此工作区。文件、Git 工作树和 {{host}} 上的分支保持不变。",
-          "title": "从 Orca 中移除“{{name}}”？",
-          "disconnectedBody": "此工作区的 SSH 主机未连接。重新连接以同时在远程删除，或仅从 Orca 中移除。",
           "ghostBody": "{{host}} 不再是已保存的 SSH 主机，因此此工作区不再连接到活跃主机。只能从 Orca 中移除 — 远程文件和分支保持不变。",
           "cancel": "取消",
-          "forget": "从 Orca 中移除",
-          "reconnectAndDelete": "重新连接并删除"
+          "forget": "从 Orca 中移除"
         },
         "MarkdownImageLightbox": {
           "image": "Image",
@@ -6208,7 +6201,7 @@
           "running": "运行中",
           "stopped": "已停止",
           "title": "添加 WSL 发行版",
-          "description": "Orca 在发行版内运行其服务器，因此 git、文件和终端都在 Linux 中原生运行。通过 \\\\wsl.localhost 打开的项目会照常工作，直到你将它们移到此主机。",
+          "description": "Orca 在发行版内运行其服务器，因此 git、文件和终端都在 Linux 中原生运行。此发行版中通过 \\\\wsl.localhost 打开的项目会在其终端空闲时自动移到此主机；位于 Windows 驱动器 (/mnt/…) 上的项目会留在此电脑。你可以从侧边栏将已移动的项目移回。",
           "distro": "发行版",
           "loading": "正在查找 WSL 发行版…",
           "placeholder": "选择发行版",
@@ -10943,7 +10936,7 @@
           "mixedTitle": "审查访问和内容",
           "instructionalTitle": "审查插件内容",
           "subtitle": "{{value0}} v{{value1}} · {{value2}}",
-          "reconsent": "权限、工作进程信任级别或指令内容自您上次审查此插件以来已更改。在运行之前请再次审查。",
+          "reconsent": "此插件在你批准后已更改。请重新审查以再次运行。",
           "capabilities": "此插件可以",
           "warning": "这些权限限制了插件如何使用 Orca 的 API。其工作进程仍作为普通进程在您的计算机上运行，可以完全访问您的文件、网络和其他进程。",
           "instructionalWarning": "此插件没有工作进程。其指令内容在您或智能体使用时仍可能引发操作。在启用之前，请审查以下指令和命令。",
@@ -20082,7 +20075,9 @@
       "preparingAriaLabel": "正在准备更新。点击展开。",
       "browserGuidance": "结束下方进程后重试：其服务器会继续运行，无需浏览器。如果其他计算机通过 SSH 连接到这台 Mac，请更新那台计算机上的 Orca，以便浏览器在更新时自动暂停。",
       "browserSummary": "后台 Orca 服务器的浏览器仍在使用此应用程序。"
-    }
+    },
+    "wslMoveInstallHeld": "项目正在移到其 WSL 主机。移动完成后再安装更新。",
+    "wslMoveUndoInstallHeld": "项目正在从其 WSL 主机移回。完成后再安装更新。"
   },
   "onboarding": {
     "language": {

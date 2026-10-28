@@ -10620,10 +10620,8 @@
           "oneWorkspace": "1 espaço de trabalho",
           "manyWorkspaces": "{{count}} espaços de trabalho",
           "hostHasWorkspacesDefault": "Remove {{value0}} e suas credenciais deste computador. Seus(Suas) {{value1}} permanecem no Orca — os arquivos remotos não são tocados.",
-          "alsoDeleteRemote": "Também excluir estes(as) {{value0}} em {{value1}}",
           "alsoForgetLocal": "Também remover estes(as) {{value0}} do Orca",
           "advanced": "Avançado",
-          "alsoDeleteRemoteHint": "Exclui permanentemente as worktrees Git remotas e suas branches. Não pode ser desfeito.",
           "alsoForgetLocalHint": "Limpa-os apenas do Orca. Os arquivos, worktrees e branches remotos permanecem intocados.",
           "wslHostEndsTerminalsUnlessShared": "Remove {{value0}} do Orca. A menos que outro Orca aberto neste computador o esteja usando, também encerra seus terminais abertos e para o servidor do Orca nessa distro. Os arquivos da distro não são alterados."
         },
@@ -10936,14 +10934,9 @@
           "6c07f3a91e": "{{value0}} em {{value1}}"
         },
         "ForgetSshWorkspaceDialog": {
-          "reconnectFailed": "Falha na reconexão",
-          "forgetBody": "Remove este espaço de trabalho apenas do Orca. Os arquivos, a worktree Git e as branches em {{host}} permanecem intocados.",
-          "title": "Excluir “{{name}}”?",
-          "disconnectedBody": "O host SSH deste espaço de trabalho não está conectado. Reconecte para excluí-lo também no remoto, ou remova-o somente do Orca.",
           "ghostBody": "{{host}} não é mais um host SSH salvo, então este espaço de trabalho não está mais conectado a um host ativo. Ele só pode ser removido do Orca — os arquivos e branches no remoto permanecem intocados.",
           "cancel": "Cancelar",
-          "forget": "Remover do Orca",
-          "reconnectAndDelete": "Reconectar e Excluir"
+          "forget": "Remover do Orca"
         },
         "RepoScanUnavailableIndicator": {
           "title": "Falha na varredura de worktree para {{value0}}",
@@ -11338,7 +11331,7 @@
           "running": "Em execução",
           "stopped": "Parada",
           "title": "Adicionar distribuição WSL",
-          "description": "O Orca executa seu servidor dentro da distribuição, para que git, arquivos e terminais funcionem nativamente no Linux. Use para novos projetos; os projetos que você abriu por \\\\wsl.localhost continuam funcionando como estão.",
+          "description": "O Orca executa seu servidor dentro da distribuição, para que git, arquivos e terminais funcionem nativamente no Linux. Os projetos desta distribuição que você abriu por \\\\wsl.localhost são movidos automaticamente para este host quando seus terminais ficam ociosos; projetos em uma unidade do Windows (/mnt/…) permanecem neste computador. Você pode trazer de volta um projeto movido pela barra lateral.",
           "distro": "Distribuição",
           "loading": "Procurando distribuições WSL…",
           "placeholder": "Escolha uma distribuição",
@@ -19984,7 +19977,9 @@
       "waitingAriaLabel": "Atualização aguardando outras instâncias do Orca. Clique para expandir.",
       "preparingLabel": "Preparando atualização",
       "preparingAriaLabel": "Preparando atualização. Clique para expandir."
-    }
+    },
+    "wslMoveInstallHeld": "Um projeto está sendo movido para o host WSL dele. Instale a atualização quando a movimentação terminar.",
+    "wslMoveUndoInstallHeld": "Um projeto está voltando do host WSL dele. Instale a atualização quando isso terminar."
   },
   "jira": {
     "connect": {

@@ -5930,10 +5930,8 @@
           "oneWorkspace": "1 espacio de trabajo",
           "manyWorkspaces": "{{count}} espacios de trabajo",
           "hostHasWorkspacesDefault": "Elimina {{value0}} y sus credenciales de esta computadora. Sus {{value1}} permanecen en Orca — los archivos remotos no se tocan.",
-          "alsoDeleteRemote": "También eliminar estos {{value0}} en {{value1}}",
           "alsoForgetLocal": "También eliminar estos {{value0}} de Orca",
           "advanced": "Avanzado",
-          "alsoDeleteRemoteHint": "Elimina permanentemente los espacios de trabajo Git remotos y sus ramas. Esta acción no se puede deshacer.",
           "alsoForgetLocalHint": "Solo limpia de Orca. Los archivos, espacios de trabajo y ramas remotas permanecen intactos.",
           "wslHostEndsTerminalsUnlessShared": "Quita {{value0}} de Orca. Salvo que otro Orca abierto en este equipo lo esté usando, también cierra sus terminales abiertas y detiene el servidor de Orca en esa distro. Los archivos de la distro no se tocan."
         },
@@ -6089,14 +6087,9 @@
           "sshImportSyncedSingular": "Se agregó {{count}} host a Orca."
         },
         "ForgetSshWorkspaceDialog": {
-          "reconnectFailed": "Error de reconexión",
-          "forgetBody": "Elimina este espacio de trabajo solo de Orca. Los archivos, el worktree de Git y las ramas en {{host}} permanecen intactos.",
-          "title": "¿Eliminar “{{name}}”?",
-          "disconnectedBody": "El host SSH de este espacio de trabajo no está conectado. Reconéctalo para eliminarlo también en el remoto, o elimínalo solo de Orca.",
           "ghostBody": "{{host}} ya no es un host SSH guardado, por lo que este espacio de trabajo ya no está conectado a un host activo. Solo se puede eliminar de Orca — los archivos y ramas en el remoto permanecen intactos.",
           "cancel": "Cancelar",
-          "forget": "Eliminar de Orca",
-          "reconnectAndDelete": "Reconectar y eliminar"
+          "forget": "Eliminar de Orca"
         },
         "MarkdownImageLightbox": {
           "image": "Image",
@@ -6210,7 +6203,7 @@
           "running": "En ejecución",
           "stopped": "Detenida",
           "title": "Agregar distro WSL",
-          "description": "Orca ejecuta su servidor dentro de la distro, así que git, los archivos y las terminales se ejecutan de forma nativa en Linux. Los proyectos que abriste a través de \\\\wsl.localhost siguen funcionando tal como están hasta que los muevas a este host.",
+          "description": "Orca ejecuta su servidor dentro de la distro, así que git, los archivos y las terminales se ejecutan de forma nativa en Linux. Los proyectos de esta distro que abriste a través de \\\\wsl.localhost se mueven a este host automáticamente cuando sus terminales están inactivas; los proyectos en una unidad de Windows (/mnt/…) se quedan en este equipo. Puedes devolver un proyecto movido desde la barra lateral.",
           "distro": "Distro",
           "loading": "Buscando distros WSL…",
           "placeholder": "Elige una distro",
@@ -10959,7 +10952,7 @@
           "mixedTitle": "Revisar acceso y contenido",
           "instructionalTitle": "Revisar el contenido del plugin",
           "subtitle": "{{value0}} v{{value1}} · {{value2}}",
-          "reconsent": "Los permisos, el nivel de confianza del proceso o el contenido instructivo cambiaron desde la última revisión de este plugin. Revísalo de nuevo antes de ejecutarlo.",
+          "reconsent": "Este plugin cambió desde que lo aprobaste. Revísalo para volver a ejecutarlo.",
           "capabilities": "Este plugin puede",
           "warning": "Estos permisos limitan cómo usa el plugin la API de Orca. Su proceso se ejecuta como un proceso normal en tu equipo, con acceso completo a tus archivos, red y otros procesos.",
           "instructionalWarning": "Este plugin no tiene ningún proceso en segundo plano. Aun así, su contenido instructivo puede provocar acciones cuando tú o un agente lo usen. Revisa las instrucciones y los comandos siguientes antes de habilitarlo.",
@@ -20047,7 +20040,9 @@
       "preparingAriaLabel": "Preparando actualización. Haz clic para expandir.",
       "browserSummary": "El navegador de un servidor Orca en segundo plano todavía usa esta aplicación.",
       "browserGuidance": "Finaliza el proceso que aparece abajo y vuelve a intentarlo: su servidor seguirá funcionando sin navegador. Si otro equipo usa este Mac como host SSH, actualiza Orca en ese equipo para que el navegador pueda pausarse automáticamente durante las actualizaciones."
-    }
+    },
+    "wslMoveInstallHeld": "Un proyecto se está moviendo a su host WSL. Instala la actualización cuando termine el movimiento.",
+    "wslMoveUndoInstallHeld": "Un proyecto está volviendo desde su host WSL. Instala la actualización cuando termine."
   },
   "jira": {
     "savedFilters": {

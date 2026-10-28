@@ -6178,10 +6178,8 @@
           "oneWorkspace": "1 çalışma alanı",
           "manyWorkspaces": "{{count}} çalışma alanı",
           "hostHasWorkspacesDefault": "{{value0}} öğesini ve kimlik bilgilerini bu bilgisayardan kaldırır. {{value1}} Orca'da kalır, uzak dosyalara dokunulmaz.",
-          "alsoDeleteRemote": "{{value1}} üzerindeki bu {{value0}} öğesini de sil",
           "alsoForgetLocal": "Bu {{value0}} öğesini Orca'dan da kaldır",
           "advanced": "Gelişmiş",
-          "alsoDeleteRemoteHint": "Uzak Git worktree'lerini ve branch'lerini kalıcı olarak siler. Geri alınamaz.",
           "alsoForgetLocalHint": "Yalnızca Orca'dan temizler. Uzak dosyalar, worktree'ler ve branch'ler dokunulmadan bırakılır.",
           "wslHostEndsTerminalsUnlessShared": "{{value0}} öğesini Orca'dan kaldırır. Bu bilgisayarda açık olan başka bir Orca onu kullanmıyorsa açık terminallerini de sonlandırır ve bu dağıtımdaki Orca sunucusunu durdurur. Dağıtımdaki dosyalar değiştirilmez."
         },
@@ -6366,14 +6364,9 @@
           "sshImportSyncedSingular": "Orca'ya {{count}} sunucu eklendi."
         },
         "ForgetSshWorkspaceDialog": {
-          "reconnectFailed": "Yeniden bağlanma başarısız oldu",
-          "forgetBody": "Bu çalışma alanını yalnızca Orca'dan kaldırır. {{host}} üzerindeki dosyalar, Git worktree'si ve branch'ler dokunulmadan bırakılır.",
-          "title": "“{{name}}” silinsin mi?",
-          "disconnectedBody": "Bu çalışma alanının SSH sunucusu bağlı değil. Uzak sunucuda da silmek için yeniden bağlanın veya yalnızca Orca'dan kaldırın.",
           "ghostBody": "{{host}} artık kayıtlı bir SSH sunucusu olmadığı için bu çalışma alanı etkin bir sunucuya bağlı değil. Yalnızca Orca'dan kaldırılabilir; uzak sunucudaki dosyalar ve branch'ler değiştirilmez.",
           "cancel": "İptal",
-          "forget": "Orca'dan Kaldır",
-          "reconnectAndDelete": "Yeniden Bağlan ve Sil"
+          "forget": "Orca'dan Kaldır"
         },
         "MarkdownImageLightbox": {
           "image": "Görsel",
@@ -6513,7 +6506,7 @@
           "running": "Çalışıyor",
           "stopped": "Durduruldu",
           "title": "WSL dağıtımı ekle",
-          "description": "Orca sunucusunu dağıtım içinde çalıştırır; böylece git, dosyalar ve terminaller doğrudan Linux'ta çalışır. Yeni projeler için kullanın; \\\\wsl.localhost üzerinden açtığınız projeler mevcut hâliyle çalışmaya devam eder.",
+          "description": "Orca sunucusunu dağıtım içinde çalıştırır; böylece git, dosyalar ve terminaller doğrudan Linux'ta çalışır. Bu dağıtımda \\\\wsl.localhost üzerinden açtığınız projeler, terminalleri boşta kaldığında otomatik olarak bu ana bilgisayara taşınır; Windows sürücüsündeki (/mnt/…) projeler bu bilgisayarda kalır. Taşınan bir projeyi kenar çubuğundan geri getirebilirsiniz.",
           "distro": "Dağıtım",
           "loading": "WSL dağıtımları aranıyor…",
           "placeholder": "Dağıtım seçin",
@@ -19983,7 +19976,9 @@
       "waitingAriaLabel": "Güncelleme diğer Orca örneklerini bekliyor. Genişletmek için tıklayın.",
       "preparingLabel": "Güncelleme hazırlanıyor",
       "preparingAriaLabel": "Güncelleme hazırlanıyor. Genişletmek için tıklayın."
-    }
+    },
+    "wslMoveInstallHeld": "Bir proje WSL ana bilgisayarına taşınıyor. Taşıma bittiğinde güncellemeyi yükleyin.",
+    "wslMoveUndoInstallHeld": "Bir proje WSL ana bilgisayarından geri getiriliyor. Bu bittiğinde güncellemeyi yükleyin."
   },
   "jira": {
     "connect": {
