@@ -23,7 +23,11 @@ import { execCommand } from '../ssh/remote-exec/remote-exec-command'
 import { readConfirmedRunningWslDistros } from '../wsl-background-distro-gate'
 import { readWindowsProcessTableFresh } from '../windows/windows-process-table'
 import { resolveWslInteropSpawnCwd } from '../wsl-interop-spawn-directory'
-import { buildWslExecArgs, buildWslLoginShellCommand } from '../../shared/wsl-login-shell-command'
+import {
+  buildWslExecArgs,
+  buildWslInteractiveLoginShellCommand,
+  buildWslLoginShellCommand
+} from '../../shared/wsl-login-shell-command'
 import { resolveWslExecutablePath } from './wsl-executable-path'
 import { createWslDistroHolder, type WslDistroHolder } from './wsl-distro-holder'
 import { WSL_DISTRO_HOLDER_POLL_SECONDS } from './wsl-distro-holder-command'
@@ -43,6 +47,11 @@ import {
   ORCAD_STARTUP_TIMING_ENV,
   ORCAD_STARTUP_TIMING_PREFIX
 } from '../orcad/orcad-startup-timing'
+import {
+  medianOrcadStartupTiming,
+  parseOrcadStartupTimingLine,
+  type OrcadStartupTimingReport
+} from '../orcad/orcad-startup-timing-summary'
 import { quotePosixShell } from '../../shared/shell-argument-quoting'
 import { ORCAD_LAUNCHER_FILENAME } from '../../shared/orcad-artifacts'
 import { verifyWslOrcadIdentity } from './wsl-orcad-pairing-identity'
@@ -357,23 +366,20 @@ function outputProbe(): { command: string; token: string } {
 }
 
 /** The newest startup timing line orcad logged; null when none parses. */
-async function readOrcadStartupTiming(): Promise<unknown> {
+async function readOrcadStartupTiming() {
   const line = await guest(
     `grep -hF ${quotePosixShell(ORCAD_STARTUP_TIMING_PREFIX)} "$HOME"/.orca-remote/orcad-*/${ORCAD_LOG_FILENAME} 2>/dev/null | tail -n 1`
   )
-  try {
-    return JSON.parse(
-      line.slice(line.indexOf(ORCAD_STARTUP_TIMING_PREFIX) + ORCAD_STARTUP_TIMING_PREFIX.length)
-    )
-  } catch {
-    return null
-  }
+  return parseOrcadStartupTimingLine(line)
 }
 
 /** (a) WSL host: holder boots the distro, orcad deploys and starts, a terminal spawns and prints. */
-async function restartThroughHost(
-  repoPath: string
-): Promise<Receipt & { phases: WslOrcadEnsurePhases | null }> {
+async function restartThroughHost(repoPath: string): Promise<
+  Receipt & {
+    phases: WslOrcadEnsurePhases | null
+    orcadStartup: OrcadStartupTimingReport | null
+  }
+> {
   await terminatePlain()
   createManager()
   const trace = createWslOrcadEnsureTrace()
@@ -392,6 +398,7 @@ async function restartThroughHost(
     })
     const createdMs = Math.round(performance.now() - started)
     const probe = outputProbe()
+    const sendStarted = performance.now()
     await held.call('terminal.send', {
       terminal: created.terminal.handle,
       text: probe.command,
@@ -409,11 +416,13 @@ async function restartThroughHost(
       100
     )
     const firstOutputMs = Math.round(performance.now() - started)
+    const sendToFirstOutputMs = Math.round(performance.now() - sendStarted)
     const orcadStartup = await readOrcadStartupTiming()
     await held.call('terminal.close', { terminal: created.terminal.handle }).catch(() => {})
     return {
       ensureMs,
       terminalCreatedMs: createdMs - ensureMs,
+      sendToFirstOutputMs,
       firstOutputMs,
       phases: summarizeWslOrcadEnsurePhases(trace.events),
       orcadStartup
@@ -439,6 +448,46 @@ async function restartThroughBridgeExec(): Promise<Receipt> {
   const firstOutputMs = Math.round(performance.now() - started)
   expect(result.output).toContain(probe.token)
   return { firstOutputMs }
+}
+
+/**
+ * (c) Old bridge as the app runs it: wsl.exe in a ConPTY with the same setup command the bridge's
+ * WSL terminals use (cd, PATH, the distro's interactive login shell), the probe typed ahead.
+ */
+async function restartThroughBridgeConpty(): Promise<Receipt> {
+  await terminatePlain()
+  const pty = await import('node-pty')
+  const probe = outputProbe()
+  const setup = ['cd "$HOME"', buildWslInteractiveLoginShellCommand()].join(' && ')
+  const started = performance.now()
+  const terminal = pty.spawn(
+    resolveWslExecutablePath(),
+    buildWslExecArgs(PLAIN, ['sh', '-c', setup]),
+    {
+      cols: 120,
+      rows: 30,
+      cwd: resolveWslInteropSpawnCwd(),
+      env: { ...process.env }
+    }
+  )
+  let output = ''
+  let firstPaintMs: number | null = null
+  terminal.onData((data) => {
+    firstPaintMs ??= Math.round(performance.now() - started)
+    output += data
+  })
+  try {
+    terminal.write(`${probe.command}\r`)
+    await waitFor(
+      'the bridge terminal to answer',
+      async () => (output.includes(probe.token) ? true : null),
+      120_000,
+      50
+    )
+    return { firstPaintMs, firstOutputMs: Math.round(performance.now() - started) }
+  } finally {
+    terminal.kill()
+  }
 }
 
 // A guest command's output is capped at 1 MiB; read big files in base64 chunks below that.
@@ -501,9 +550,11 @@ async function distroRestartBaseline(): Promise<void> {
   await restartThroughBridgeExec()
   const host: Awaited<ReturnType<typeof restartThroughHost>>[] = []
   const bridge: Receipt[] = []
+  const conpty: Receipt[] = []
   for (let i = 0; i < 3; i++) {
     host.push(await restartThroughHost(repoPath))
     bridge.push(await restartThroughBridgeExec())
+    conpty.push(await restartThroughBridgeConpty())
   }
   const median = (runs: Receipt[], key: string): number =>
     runs.map((run) => Number(run[key])).toSorted((a, b) => a - b)[1] ?? 0
@@ -512,8 +563,14 @@ async function distroRestartBaseline(): Promise<void> {
     bridgeExecLowerBound: bridge,
     medianHostFirstOutputMs: median(host, 'firstOutputMs'),
     medianHostEnsureMs: median(host, 'ensureMs'),
+    medianHostTerminalCreatedMs: median(host, 'terminalCreatedMs'),
+    medianHostSendToFirstOutputMs: median(host, 'sendToFirstOutputMs'),
+    medianOrcadStartup: medianOrcadStartupTiming(host.map((run) => run.orcadStartup)),
     medianHostPhases: medianWslOrcadEnsurePhases(host.map((run) => run.phases)),
-    medianBridgeExecLowerBoundMs: median(bridge, 'firstOutputMs')
+    medianBridgeExecLowerBoundMs: median(bridge, 'firstOutputMs'),
+    bridgeConpty: conpty,
+    medianBridgeConptyFirstPaintMs: median(conpty, 'firstPaintMs'),
+    medianBridgeConptyFirstOutputMs: median(conpty, 'firstOutputMs')
   }
   receipt.orcadStartupProfiles = await profileOrcadRestart(repoPath)
   await terminatePlain()
