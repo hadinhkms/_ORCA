@@ -433,6 +433,47 @@
         "conflictingOverrides": "有冲突的自定义快捷键已被忽略：{{actions}}。",
         "readFailed": "无法读取键绑定文件：{{reason}}"
       }
+    },
+    "network": {
+      "proxyUrlErrors": {
+        "tooLong": "代理 URL 过长。",
+        "invalid": "请输入有效的代理 URL。",
+        "unsupportedProtocol": "请使用 http、https、socks、socks4 或 socks5 代理 URL。",
+        "missingHost": "代理 URL 必须包含主机。"
+      }
+    },
+    "voice": {
+      "modelDescriptions": {
+        "parakeetV3": "为 25 种欧洲语言提供最高准确度。支持标点、大小写和词级时间戳。",
+        "parakeetV2": "仅限英语。准确度与 v3 相近，速度更快。支持标点和大小写。",
+        "zipformerBilingual": "中文 + 英文，支持语言混用。低延迟实时流式处理。",
+        "paraformerBilingual": "中文（普通话 + 方言）+ 英文。擅长识别各地口音和方言。",
+        "zipformerStreamingEn": "仅限英语。2000 万参数的轻量模型，兼顾速度和体积。",
+        "zipformerStreamingZh": "仅限中文。1400 万参数的超轻量模型，适合资源有限的设备。",
+        "zipformerStreamingKo": "仅限韩语。低延迟实时流式处理。",
+        "parakeetJa": "仅限日语。使用超过 3.5 万小时的自然语音训练。支持标点。",
+        "whisperTiny": "支持 90 多种语言。准确度低于 Parakeet，但语言覆盖最广。",
+        "senseVoice": "支持中文、英语、日语、韩语和粤语，并自动检测语言。",
+        "gpt4oMiniTranscribe": "准确度高、成本低的云端转录。需要 OpenAI API 密钥。",
+        "gpt4oTranscribe": "准确度更高的云端转录。需要 OpenAI API 密钥。"
+      }
+    },
+    "diagnostics": {
+      "errors": {
+        "creatingDisabled": "已禁用创建查看文件",
+        "sendingDisabled": "已禁用发送诊断信息",
+        "sendingNotConfigured": "此构建版本未配置诊断信息发送功能",
+        "expiredBeforeSending": "查看文件已过期；请在发送前创建新文件",
+        "expiredBeforeOpening": "查看文件已过期；请在打开前创建新文件",
+        "previewNotOpened": "请在发送前打开查看文件",
+        "previewOpenFailed": "无法打开查看文件",
+        "deleteNotConfigured": "此构建版本未配置诊断信息上传端点",
+        "createFailed": "无法创建查看文件",
+        "openFailed": "无法打开查看文件",
+        "sendFailed": "无法发送诊断信息",
+        "discardFailed": "无法丢弃查看文件",
+        "deleteFailed": "无法删除已发送的诊断信息"
+      }
     }
   },
   "menu": {
@@ -11392,9 +11433,7 @@
         },
         "pluginThemeApply": {
           "nowUsing": "正在使用 {{value0}}",
-          "switchBack": "切换回去",
-          "setAsLight": "已将 {{value0}} 设为浅色主题",
-          "setAsDark": "已将 {{value0}} 设为深色主题"
+          "switchBack": "切换回去"
         },
         "pluginError": {
           "installManifestMissing": "未找到可读的 orca-plugin.json。请选择插件的根文件夹。",
@@ -11405,6 +11444,7 @@
           "installGit": "无法获取此 Git 版本。请检查 URL、#ref 和访问权限。",
           "invalidManifestMissing": "插件根目录缺少 orca-plugin.json。请添加它，然后刷新插件。",
           "invalidManifest": "orca-plugin.json 无效。请修复它，然后刷新插件。",
+          "installedManifestUnloadable": "此版本无法在当前 Orca 中加载。请更新或重新安装。",
           "invalidArtifact": "工作进程或面板文件缺失或不安全。修复后请刷新。",
           "consentChanged": "你审查期间此插件发生了变化。请重新审查。"
         },
@@ -12432,6 +12472,7 @@
           "noAccessReach": "仅限其自身文件"
         },
         "PluginManagerRows": {
+          "reinstall": "重新安装",
           "crashedCount": "连续崩溃 {{value0}} 次",
           "crashed": "启动时崩溃",
           "remove": "移除…",
@@ -18163,6 +18204,7 @@
         "codexManagedNotSignedIn": "此 Codex 账户尚未登录。请在 Codex 账户设置中重新登录。",
         "antigravityNotSignedIn": "尚未登录 Antigravity。请在设置 → 账户 → Antigravity中登录，然后重新发送消息。",
         "cliMissing": "在运行此聊天的计算机上找不到 {{agent}}。请安装它，或检查设置 → 智能体中的命令。",
+        "cliMissingInWslDistro": "WSL 发行版 {{distro}} 中未安装 {{agent}}。请在 {{distro}} 中安装它，或检查设置 → 智能体中的命令。",
         "signInFirst": "请先登录。",
         "signInThenRunCommand": "请登录，然后重新运行 /{{command}}。",
         "signInThenSend": "请登录，然后重新发送您的消息。",
@@ -18186,6 +18228,7 @@
         "providerExitedRow": "{{agent}} 在生成此回复时停止了。您可以在此对话中继续。",
         "providerExitedRejection": "{{agent}} 在发送此消息前已停止。",
         "providerExitedAnswer": "{{agent}} 已停止，因此您的回答未发送。发送消息以继续。",
+        "modelUnavailable": "{{agent}} 无法使用 {{detail}}。请选择其他模型并重新发送。",
         "providerRejected": "{{agent}} 未接受此消息。",
         "providerRejectedQuoted": "{{agent}} 未接受此消息：{{detail}}。",
         "attachmentEmpty": "此消息中的一张图片为空，因此消息未发送。",
@@ -18997,6 +19040,27 @@
         "noLiveTerminal": "没有可用的活动终端。",
         "commandCanceled": "输入框已关闭，Chat UI 命令已取消。",
         "commandRejected": "终端未接受该命令。"
+      },
+      "sessionOptionErrors": {
+        "startOnly": "此选项只能在会话启动时设置。",
+        "modelRejected": "Claude 保留了当前模型。",
+        "modelUnverified": "无法验证模型变更，请打开终端检查。",
+        "unknownOption": "未知的会话选项：{{id}}",
+        "agentPickerOnly": "此选项必须在智能体选择器中更改。",
+        "toggleBaselineUnknown": "当前值未知，请改用“切换”操作。",
+        "afterStartOnly": "此选项仅在会话启动后可用。",
+        "valueRequired": "此选项需要一个值。",
+        "toggleValueKnown": "此选项的值已知，请改选“开启”或“关闭”。"
+      },
+      "composerErrors": {
+        "goalObjectiveMissing": "请在 /goal 后描述目标。",
+        "commandUnavailable": "/{{name}} 在聊天会话中不可用。请使用斜杠菜单查看可用命令。",
+        "commandTakesNoArguments": "请使用 /{{name}}，不要附带参数。",
+        "commandUnsupportedByHost": "此聊天主机不支持 /{{name}}。",
+        "modelPickerFailed": "无法打开模型选择器。",
+        "effortPickerFailed": "无法打开推理强度选择器。",
+        "modelApplyFailed": "无法应用模型 {{value}}。",
+        "effortApplyFailed": "无法应用推理强度 {{value}}。"
       }
     },
     "tab": {
@@ -19948,6 +20012,12 @@
       "searching": "正在搜索…",
       "searchFailed": "搜索未能完成，请重试。",
       "refreshFailed": "预览更新失败，正在显示上一版本。请打开源码视图查看当前内容。"
+    },
+    "pdfExport": {
+      "errors": {
+        "noContent": "没有可导出的内容",
+        "timedOut": "导出超时"
+      }
     }
   },
   "featureTips": {
@@ -20317,7 +20387,33 @@
     "antigravityIdeToCli": "IDE → CLI",
     "antigravity2ToCli": "2.0 → 命令行界面",
     "continueInCli": "在 CLI 中继续",
-    "continueInCliNewTab": "在新选项卡中继续使用 CLI"
+    "continueInCliNewTab": "在新选项卡中继续使用 CLI",
+    "scanIssues": {
+      "issuesOmitted": "已省略其他扫描问题。",
+      "sessionMetadataUnreadable": "本次扫描未能读取会话元数据。",
+      "openCodeScannerUnavailable": "由于无法启动后台扫描器，已跳过 OpenCode 历史记录；应用仍可正常响应。",
+      "openCodeScanIncomplete": "OpenCode 历史记录扫描未完成：{{detail}}",
+      "openCodeWslReaderPreparing": "正在准备 WSL SQLite 读取器。设置完成后请刷新 Vault。",
+      "openCodeWslReaderNotPrepared": "WSL SQLite 读取器尚未准备就绪。请刷新 Vault 以重试。",
+      "openCodeDatabaseBusy": "{{label}} 正在写入 {{name}}，因此已跳过其历史记录。下次刷新时会重新读取。",
+      "openCodeDatabaseUnreadable": "无法读取 {{label}} 在 {{name}} 中的历史记录：{{detail}}",
+      "openCodeWslDatabaseUnsupported": "目前尚无法从 Windows 搜索 WSL 内的 {{label}} 会话。",
+      "openCodeWriteAheadLogUnreadable": "无法读取 {{label}} 在 {{name}} 中的历史记录。此文件系统不支持以只读方式打开其预写日志。请正常退出 {{label}} 以将日志写入数据库。",
+      "wslTranscriptFsSlow": "由于文件系统访问耗时过长，WSL 会话记录文件暂时不可用。请稍后重试；如果问题持续，请重启 Orca。",
+      "wslTranscriptFsCapacity": "由于已有太多文件系统请求在排队，暂时无法查找 WSL 会话记录。请稍后重试；如果问题持续，请重启 Orca。",
+      "wslTranscriptFsProcessFailed": "由于文件系统辅助进程失败（{{detail}}），WSL 会话记录文件暂时不可用。请稍后重试；如果问题持续，请重启 Orca。",
+      "wslDistroNotRunning": "由于 WSL 发行版“{{distro}}”未运行，WSL 会话记录文件不可用。请在该发行版中打开终端以启动它。",
+      "wslDistroUnverifiable": "WSL 未回应“{{distro}}”是否正在运行，因此无法使用 WSL 会话记录文件。请稍后重试。",
+      "wslSessionsFromLastScan": "无法检查 WSL；其会话来自上次扫描。",
+      "scopePathsTruncated": "仅扫描了前 {{limit}} 个项目路径。",
+      "invalidResultsSkipped_other": "已跳过智能体会话历史中 {{count}} 条无效的结果条目。",
+      "scanTimedOutOnSshHost": "此 SSH 主机上的会话扫描在 {{seconds}} 秒后超时。请刷新以重试。",
+      "scanTimedOut": "会话扫描在 {{seconds}} 秒后超时，计算机可能正忙。请刷新以重试。",
+      "scannerPaused": "会话扫描因多次失败而暂停。请刷新以重试。",
+      "scannerBusy": "同时进行的会话扫描过多。请稍等片刻，然后刷新。",
+      "scannerMissing": "此 Orca 安装中缺少会话扫描器。重新安装 Orca 可将其恢复。",
+      "scannerStopped": "会话扫描器意外停止。请刷新以重试。"
+    }
   },
   "common": {
     "retry": "重试",
@@ -20931,7 +21027,12 @@
       "settings": "设置",
       "dialogTitle": "聊天自动命名失败",
       "dialogDescriptionStart": "Orca 无法根据第一条消息为",
-      "dialogDescriptionEnd": "生成名称。"
+      "dialogDescriptionEnd": "生成名称。",
+      "errors": {
+        "noName": "聊天命名智能体未返回名称。",
+        "agentNotRun": "Orca 无法运行聊天命名智能体。",
+        "noAgentAvailable": "此工作区中没有可运行的聊天命名智能体。"
+      }
     }
   },
   "jira": {
@@ -21454,10 +21555,37 @@
       "automationHistory": "自动化历史",
       "onboarding": "入门引导进度",
       "other": "其他已保存的应用状态"
+    },
+    "startupFailure": {
+      "noneFound": "（未找到）",
+      "sqlitePath": "SQLite 路径：{{path}}",
+      "sectionsDamaged": "此配置文件已保存状态的一部分已损坏：{{sections}}。其余内容均完好无损。",
+      "repairCommand": "关闭 Orca，然后运行 `{{command}}`，仅从备份中替换损坏的部分，并保留其余所有内容。Orca 会保留损坏文件的副本。",
+      "restoreWholeBackup": "如需改为恢复整份备份，请先运行 `{{exportsCommand}}`，再运行 `{{rollbackCommand}}`。",
+      "sqliteUnreadable": "Orca 无法安全地打开当前配置文件，因为其 SQLite 状态无法读取。",
+      "legacyJsonPath": "旧版 JSON 路径：{{path}}",
+      "retainedBackups": "保留的 SQLite 备份：",
+      "retainedExports": "保留的 JSON 导出：",
+      "chooseRecoveryArtifact": "关闭 Orca，然后运行 `{{command}}`，选择一份确认完好的恢复数据。",
+      "restoreCommands": "使用 `{{backupCommand}}` 恢复 SQLite，或使用 `{{revisionCommand}}` 恢复 JSON 导出。",
+      "authorityAmbiguous": "Orca 无法安全地确定以哪份配置文件状态为准：{{detail}}",
+      "authorityBothPreserved": "旧版本可能修改过 JSON 文件。两个副本均已保留，不会自动选择任何一个。",
+      "authorityCopyFirst": "关闭 Orca 并复制配置文件目录，然后再选择要保留的状态。",
+      "authorityKeepJson": "如需保留当前 JSON（包括旧版本中的修改），请运行 `{{command}}`。此操作会归档两个副本，不会合并其内容。",
+      "authorityInspect": "运行 `{{command}}` 以查看保留的恢复点。",
+      "authorityRestore": "请先选择要恢复的状态，再使用 `{{backupCommand}}` 或 `{{revisionCommand}}`。",
+      "newerSchema": "此配置文件由较新版本的 Orca 保存。请使用该版本或更新版本打开。你的配置文件未被更改。",
+      "revisionConflict": "Orca 启动期间，当前配置文件发生了更改。请关闭使用此配置文件的其他 Orca 进程，然后重新启动 Orca。",
+      "writerUnavailable": "Orca 无法启动配置文件保存功能。请重新启动 Orca；如果问题仍然存在，请修复或重新安装此版本。",
+      "publicationUnavailable": "Orca 无法将配置文件状态安全地保存到 {{directory}}。",
+      "publicationNeedsHardLinks": "此位置必须支持硬链接，且 Orca 需要创建硬链接的权限。",
+      "publicationMoveData": "在检查文件夹权限，或将整个 Orca 数据目录移动到支持硬链接的可写本地文件系统（如 APFS、NTFS 或 ext4）之前，请关闭 Orca 和 orcad。",
+      "publicationKeepFiles": "请保留原始目录和所有恢复文件。"
     }
   },
   "startupFailure": {
-    "title": "Orca 无法启动"
+    "title": "Orca 无法启动",
+    "finishFailed": "Orca 无法完成启动：{{detail}}"
   },
   "localBuild": {
     "chooseTitle": "选择本地 Orca 构建",
@@ -21840,6 +21968,22 @@
         "error": "项目在所选自动化主机上设置失败。",
         "unsupported": "所选自动化主机不支持此项目。"
       }
+    },
+    "extraAgentArgs": {
+      "errors": {
+        "tooLarge": "额外参数不得超过 4 KB。",
+        "controlCharacters": "额外参数不能包含控制字符或换行符。",
+        "invalid": "额外参数无效：{{detail}}",
+        "shellSyntax": "{{text}} 使用了额外参数不允许的 Shell 语法。",
+        "terminator": "额外参数中不允许使用“--”。",
+        "notAnOption": "“{{token}}”不是选项。{{agent}} 的额外参数仅接受：{{allowed}}。",
+        "optionNotAllowed": "{{agent}} 的额外参数中不允许使用“{{option}}”。允许的选项：{{allowed}}。",
+        "missingValue": "“{{option}}”需要一个值。",
+        "valueNotAllowed": "不允许使用“{{option}} {{value}}”。{{agent}} 的额外参数仅接受“{{option}} {{prefix}}<level>”。",
+        "modelRepeated": "额外参数重复设置了模型。",
+        "effortRepeated": "额外参数重复设置了推理强度。"
+      },
+      "hostUpdateRequired": "请更新此主机上的 Orca 以使用额外参数。"
     }
   },
   "codeHost": {
@@ -22010,5 +22154,79 @@
         "title": "PDF、图片、CSV、Markdown"
       }
     }
+  },
+  "setupScriptPrompt": {
+    "candidateLabels": {
+      "codexEnvironment": "Codex 环境",
+      "packageManager": "包管理器"
+    }
+  },
+  "emulator": {
+    "errors": {
+      "disabled": "手机模拟器已在设置中禁用。",
+      "notAvailable": "手机模拟器不可用。",
+      "noSession": "没有活动的模拟器会话",
+      "noDeviceSpecified": "未指定模拟器设备。请在设置 > 手机模拟器中选择默认设备，或传入设备。",
+      "workspaceChanged": "模拟器启动期间工作区已更改。请重新连接模拟器。",
+      "noIosSimulators": "未找到 iOS 模拟器。请在 Xcode Settings > Platforms 中添加一个。",
+      "simctlUnavailable": "xcrun simctl 不可用。",
+      "simulatorToolsUnavailable": "Xcode Simulator 工具不可用。请安装完整版 Xcode，打开一次，然后使用 `sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer` 选择它。",
+      "requiresMacosXcode": "iOS 模拟器需要安装了 Xcode Command Line Tools 的 macOS。",
+      "simulatorNotFound": "未找到模拟器 {{udid}}。请通过 Xcode > Window > Devices and Simulators 创建一个。",
+      "serveSimUnavailable": "serve-sim 不可用。",
+      "serveSimNoEndpoints": "serve-sim 未返回流端点。",
+      "serveSimEndpointUnreachable": "serve-sim 已启动，但无法访问其流端点。",
+      "androidSdkMissing": "未找到 Android SDK。请安装 Android Studio 并设置 ANDROID_HOME。",
+      "adbUnavailable": "adb 不可用。",
+      "noAndroidDevices": "未找到 Android 设备或 AVD。请在 Android Studio 中创建一个。",
+      "androidDeviceNotRunning": "Android 设备“{{device}}”未运行。请先启动它。",
+      "unknownDeviceOrAvd": "“{{device}}”不是正在运行的设备，也不是已知的 AVD。",
+      "avdBootTimeout": "AVD “{{avdName}}”未能及时完成启动。",
+      "scrcpyDownloadFailed": "无法下载 scrcpy 服务器：{{detail}}",
+      "scrcpyServerInvalid": "下载的 scrcpy 服务器无效或不完整。"
+    },
+    "pane": {
+      "listDevicesFailed": "无法列出模拟器设备。",
+      "noDevices": "未找到模拟器设备。请在 Xcode 中添加 iOS 模拟器，或在 Android Studio 中添加 Android 虚拟设备。",
+      "startFailed": "无法启动模拟器。请确保已配置好 Xcode（iOS）或 Android Studio（Android），然后尝试其他设备。",
+      "shutdownFailed": "无法关闭模拟器。请重试，或通过模拟器管理器停止它。"
+    },
+    "settings": {
+      "availabilityCheckFailed": "无法检查模拟器可用性。"
+    }
+  },
+  "ephemeralVm": {
+    "errors": {
+      "repoNotFound": "未找到仓库：{{repoId}}",
+      "remoteRepoUnsupported": "在 v1 中，临时虚拟机环境模板在本地桌面主机上运行。",
+      "recipeNotFound": "未找到环境模板：{{recipeId}}",
+      "runtimeNotFound": "未知的临时虚拟机运行时：{{runtimeId}}",
+      "runtimeRepoMissing": "临时虚拟机运行时没有仓库 ID：{{runtimeId}}",
+      "provisionCancelled": "预配已取消。",
+      "startRefUnresolved": "无法解析已预配根目录的起始引用：{{ref}}",
+      "defaultStartRefUnresolved": "无法解析已预配根目录的默认起始引用。",
+      "recipeExited": "环境模板已退出，退出码为 {{exitCode}}。",
+      "recipeResultMissing": "环境模板未生成 JSON 结果。",
+      "recipeResultNotJsonObject": "环境模板的 stdout 必须是单个 JSON 对象。",
+      "recipeResultPairingCodeInvalid": "环境模板结果中的 pairingCode 不是有效的 Orca 配对码。",
+      "recipeResultProjectRootNotAbsolute": "环境模板结果中的 projectRoot 必须是运行时中的绝对路径。",
+      "provisionedRootResultRequired": "使用已预配根目录的环境模板必须返回 schemaVersion 2，且 checkoutMode 为 \"provisioned-root\"。",
+      "provisionedRootNotConfigured": "环境模板结果请求使用已预配根目录检出模式，但环境模板未配置为使用此模式。",
+      "destroyExited": "销毁操作已退出，退出码为 {{exitCode}}。",
+      "destroyFailed": "销毁失败。",
+      "destroyDisabled": "此环境模板已禁用销毁。",
+      "cleanupStopped": "用户已停止清理。",
+      "cleanupInterrupted": "清理已中断。请重试清理以继续。",
+      "sshTargetRemoveFailed": "无法移除隐藏的 SSH 目标。",
+      "recipeExitedWithoutCode": "环境模板已退出，退出码未知。",
+      "destroyExitedWithoutCode": "销毁操作已退出，退出码未知。"
+    }
+  },
+  "installDirAcl": {
+    "cause": "Orca 安装文件夹的 Windows 权限阻止了 Orca 自身的沙箱进程读取随应用附带的文件。",
+    "repaired": "Orca 已修复权限。请重新加载以应用。",
+    "repairing": "Orca 正在修复权限。",
+    "repairFailed": "Orca 无法修复权限，这通常意味着该文件夹需要管理员权限。",
+    "runCommands": "在以管理员身份运行的命令提示符中执行以下命令，然后重新启动 Orca："
   }
 }

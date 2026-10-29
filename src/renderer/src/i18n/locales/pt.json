@@ -191,7 +191,35 @@
     "antigravityIdeToCli": "IDE → CLI",
     "antigravity2ToCli": "2.0 → CLI",
     "continueInCli": "Continuar na CLI",
-    "continueInCliNewTab": "Continuar na CLI em nova aba"
+    "continueInCliNewTab": "Continuar na CLI em nova aba",
+    "scanIssues": {
+      "issuesOmitted": "Outros problemas da verificação foram omitidos.",
+      "sessionMetadataUnreadable": "Não foi possível ler os metadados das sessões nesta verificação.",
+      "openCodeScannerUnavailable": "O histórico do OpenCode foi ignorado porque seu verificador em segundo plano não pôde ser iniciado; o aplicativo continua respondendo.",
+      "openCodeScanIncomplete": "A verificação do histórico do OpenCode não foi concluída: {{detail}}",
+      "openCodeWslReaderPreparing": "Preparando o leitor SQLite do WSL. Atualize o Vault após a conclusão da configuração.",
+      "openCodeWslReaderNotPrepared": "O leitor SQLite do WSL não está preparado. Atualize o Vault para tentar novamente.",
+      "openCodeDatabaseBusy": "{{label}} está gravando em {{name}}, por isso seu histórico foi ignorado. Ele será lido novamente na próxima atualização.",
+      "openCodeDatabaseUnreadable": "Não foi possível ler o histórico de {{label}} em {{name}}: {{detail}}",
+      "openCodeWslDatabaseUnsupported": "Ainda não é possível pesquisar sessões de {{label}} dentro do WSL a partir do Windows.",
+      "openCodeWriteAheadLogUnreadable": "Não foi possível ler o histórico de {{label}} em {{name}}. Seu log de gravação antecipada não pode ser aberto em modo somente leitura neste sistema de arquivos. Encerre {{label}} normalmente para descarregar o log.",
+      "wslTranscriptFsSlow": "Os arquivos de transcrição do WSL estão temporariamente indisponíveis porque o acesso ao sistema de arquivos está demorando demais. Tente novamente em instantes ou reinicie o Orca se o problema persistir.",
+      "wslTranscriptFsCapacity": "A busca por transcrições do WSL está temporariamente indisponível porque já há solicitações demais ao sistema de arquivos em espera. Tente novamente em instantes ou reinicie o Orca se o problema persistir.",
+      "wslTranscriptFsProcessFailed": "Os arquivos de transcrição do WSL estão temporariamente indisponíveis porque o processo auxiliar do sistema de arquivos falhou ({{detail}}). Tente novamente em instantes ou reinicie o Orca se o problema persistir.",
+      "wslDistroNotRunning": "Os arquivos de transcrição do WSL estão indisponíveis porque a distribuição WSL '{{distro}}' não está em execução. Abra um terminal nela para iniciá-la.",
+      "wslDistroUnverifiable": "Os arquivos de transcrição do WSL estão indisponíveis porque o WSL não respondeu se '{{distro}}' está em execução. Tente novamente em instantes.",
+      "wslSessionsFromLastScan": "Não foi possível verificar o WSL; as sessões são da última verificação.",
+      "scopePathsTruncated": "Apenas os primeiros {{limit}} caminhos de projetos foram verificados.",
+      "invalidResultsSkipped_one": "{{count}} entrada de resultado inválida do Histórico de Sessões de Agente foi ignorada.",
+      "invalidResultsSkipped_other": "{{count}} entradas de resultado inválidas do Histórico de Sessões de Agente foram ignoradas.",
+      "invalidResultsSkipped_many": "{{count}} entradas de resultado inválidas do Histórico de Sessões de Agente foram ignoradas.",
+      "scanTimedOutOnSshHost": "A verificação de sessões excedeu o tempo limite de {{seconds}} s neste host SSH. Atualize para tentar novamente.",
+      "scanTimedOut": "A verificação de sessões excedeu o tempo limite de {{seconds}} s — a máquina pode estar ocupada. Atualize para tentar novamente.",
+      "scannerPaused": "A verificação de sessões foi pausada após falhas repetidas. Atualize para tentar novamente.",
+      "scannerBusy": "Há verificações de sessões demais em andamento. Aguarde um momento e atualize.",
+      "scannerMissing": "O verificador de sessões está ausente nesta instalação do Orca. Reinstalar o Orca o restaura.",
+      "scannerStopped": "O verificador de sessões parou inesperadamente. Atualize para tentar novamente."
+    }
   },
   "checksPanel": {
     "unlinked": {
@@ -219,6 +247,12 @@
       "searching": "Buscando…",
       "searchFailed": "Não foi possível concluir a busca. Tente novamente.",
       "refreshFailed": "Falha ao atualizar a prévia. Mostrando a versão anterior; abra o código-fonte para ver o conteúdo atual."
+    },
+    "pdfExport": {
+      "errors": {
+        "noContent": "Nenhum conteúdo para exportar",
+        "timedOut": "O tempo limite da exportação foi excedido"
+      }
     }
   },
   "notifications": {
@@ -1336,6 +1370,47 @@
         "unknownPlatform": "A plataforma desconhecida \"{{platform}}\" foi ignorada.",
         "conflictingOverrides": "Atalhos personalizados conflitantes foram ignorados: {{actions}}.",
         "readFailed": "Não foi possível ler o arquivo de atalhos: {{reason}}"
+      }
+    },
+    "network": {
+      "proxyUrlErrors": {
+        "tooLong": "A URL de proxy é longa demais.",
+        "invalid": "Insira uma URL de proxy válida.",
+        "unsupportedProtocol": "Use uma URL de proxy http, https, socks, socks4 ou socks5.",
+        "missingHost": "A URL de proxy deve incluir um host."
+      }
+    },
+    "voice": {
+      "modelDescriptions": {
+        "parakeetV3": "Máxima precisão para 25 idiomas europeus. Pontuação, maiúsculas e minúsculas e marcas de tempo por palavra.",
+        "parakeetV2": "Somente inglês. Mais rápido que v3 com precisão semelhante. Pontuação e maiúsculas e minúsculas.",
+        "zipformerBilingual": "Chinês + inglês com alternância de idiomas. Streaming em tempo real com baixa latência.",
+        "paraformerBilingual": "Chinês (mandarim + dialetos) + inglês. Bom desempenho com sotaques e variantes regionais do chinês.",
+        "zipformerStreamingEn": "Somente inglês. Modelo leve de 20 milhões de parâmetros, com bom equilíbrio entre velocidade e tamanho.",
+        "zipformerStreamingZh": "Somente chinês. Modelo ultraleve de 14 milhões de parâmetros, ideal para dispositivos com poucos recursos.",
+        "zipformerStreamingKo": "Somente coreano. Streaming em tempo real com baixa latência.",
+        "parakeetJa": "Somente japonês. Treinado com mais de 35 mil horas de fala natural. Inclui pontuação.",
+        "whisperTiny": "Mais de 90 idiomas. Menor precisão que Parakeet, mas com a maior cobertura de idiomas.",
+        "senseVoice": "Chinês, inglês, japonês, coreano e cantonês com detecção automática de idioma.",
+        "gpt4oMiniTranscribe": "Transcrição na nuvem com alta precisão e baixo custo. Exige uma chave de API da OpenAI.",
+        "gpt4oTranscribe": "Transcrição na nuvem com maior precisão. Exige uma chave de API da OpenAI."
+      }
+    },
+    "diagnostics": {
+      "errors": {
+        "creatingDisabled": "a criação de arquivos de revisão está desativada",
+        "sendingDisabled": "o envio de diagnósticos está desativado",
+        "sendingNotConfigured": "o envio de diagnósticos não está configurado para este build",
+        "expiredBeforeSending": "o arquivo de revisão expirou; crie um novo antes de enviá-lo",
+        "expiredBeforeOpening": "o arquivo de revisão expirou; crie um novo antes de abri-lo",
+        "previewNotOpened": "abra o arquivo de revisão antes de enviá-lo",
+        "previewOpenFailed": "não foi possível abrir o arquivo de revisão",
+        "deleteNotConfigured": "o endpoint de upload de diagnósticos não está configurado para este build",
+        "createFailed": "Não foi possível criar o arquivo de revisão",
+        "openFailed": "Não foi possível abrir o arquivo de revisão",
+        "sendFailed": "Não foi possível enviar os diagnósticos",
+        "discardFailed": "Não foi possível descartar o arquivo de revisão",
+        "deleteFailed": "Não foi possível excluir os diagnósticos enviados"
       }
     }
   },
@@ -7713,6 +7788,7 @@
           "installGit": "O Orca não conseguiu obter a revisão Git fixada. Verifique a URL, o #ref, o acesso e a configuração do Git do sistema.",
           "invalidManifestMissing": "A raiz do plugin está sem o orca-plugin.json. Adicione-o e depois atualize os plugins.",
           "invalidManifest": "orca-plugin.json é inválido. Corrija-o e depois atualize os plugins.",
+          "installedManifestUnloadable": "Esta versão não pode ser carregada neste Orca. Atualize-a ou reinstale-a.",
           "invalidArtifact": "Um arquivo de worker ou painel declarado está ausente ou é inseguro. Corrija os arquivos do plugin e depois atualize.",
           "consentChanged": "O plugin mudou enquanto você o revisava. Feche esta caixa de diálogo e revise as permissões atualizadas."
         },
@@ -8873,6 +8949,7 @@
           "updatesKeepApproval": "Atualizações só perguntam de novo por novo acesso"
         },
         "PluginManagerRows": {
+          "reinstall": "Reinstalar",
           "crashed": "Falhou ao iniciar",
           "crashedCount": "Falhou {{value0}} vezes seguidas",
           "crashedOnce": "Falhou uma vez",
@@ -8902,10 +8979,6 @@
         "PluginThemeUseNow": {
           "useForLight": "Usar no claro:",
           "useForDark": "Usar no escuro:"
-        },
-        "pluginThemeApply": {
-          "setAsLight": "{{value0}} agora é seu tema claro",
-          "setAsDark": "{{value0}} agora é seu tema escuro"
         },
         "AppearanceInterfaceSection": {
           "lightTheme": "Tema claro",
@@ -19746,6 +19819,7 @@
         "codexManagedNotSignedIn": "Esta conta do Codex não está conectada. Entre novamente nas configurações de Contas do Codex.",
         "antigravityNotSignedIn": "O Antigravity não está conectado à conta. Entre em Configurações → Contas → Antigravity. Depois, envie sua mensagem novamente.",
         "cliMissing": "{{agent}} não foi encontrado no computador que executa este chat. Instale-o ou verifique seu Comando em Configurações → Agentes.",
+        "cliMissingInWslDistro": "{{agent}} não está instalado na distribuição WSL {{distro}}. Instale-o dentro de {{distro}} ou verifique seu Comando em Configurações → Agentes.",
         "signInFirst": "Entre na conta primeiro.",
         "signInThenRunCommand": "Entre na conta e execute /{{command}} novamente.",
         "signInThenSend": "Entre na conta e envie sua mensagem novamente.",
@@ -20205,6 +20279,27 @@
         "noLiveTerminal": "Nenhum terminal ativo está disponível.",
         "commandCanceled": "O comando da Interface de Chat foi cancelado porque o campo de texto foi fechado.",
         "commandRejected": "O terminal não aceitou o comando."
+      },
+      "sessionOptionErrors": {
+        "startOnly": "Esta opção só pode ser definida ao iniciar a sessão.",
+        "modelRejected": "Claude manteve o modelo atual.",
+        "modelUnverified": "Não foi possível verificar a mudança de modelo; abra o terminal para conferir.",
+        "unknownOption": "Opção de sessão desconhecida: {{id}}",
+        "agentPickerOnly": "Esta opção deve ser alterada no seletor de agente.",
+        "toggleBaselineUnknown": "O valor atual é desconhecido; use a ação Alternar.",
+        "afterStartOnly": "Esta opção só está disponível após o início da sessão.",
+        "valueRequired": "Esta opção exige um valor.",
+        "toggleValueKnown": "Esta opção tem um valor conhecido; escolha Ativado ou Desativado."
+      },
+      "composerErrors": {
+        "goalObjectiveMissing": "Descreva o objetivo após /goal.",
+        "commandUnavailable": "/{{name}} não está disponível em sessões de chat. Use o menu de comandos / para ver os comandos disponíveis.",
+        "commandTakesNoArguments": "Use /{{name}} sem argumentos.",
+        "commandUnsupportedByHost": "Este host de chat não oferece suporte a /{{name}}.",
+        "modelPickerFailed": "Não foi possível abrir o seletor de modelo.",
+        "effortPickerFailed": "Não foi possível abrir o seletor de esforço.",
+        "modelApplyFailed": "Não foi possível aplicar o modelo {{value}}.",
+        "effortApplyFailed": "Não foi possível aplicar o esforço {{value}}."
       }
     },
     "tab": {
@@ -21343,7 +21438,12 @@
       "dialogTitle": "Falha ao nomear o chat automaticamente",
       "dialogDescriptionStart": "O Orca não conseguiu gerar um nome para",
       "dialogDescriptionEnd": "a partir da primeira mensagem.",
-      "settings": "Configurações"
+      "settings": "Configurações",
+      "errors": {
+        "noName": "O agente que nomeia os chats não retornou nenhum nome.",
+        "agentNotRun": "O Orca não conseguiu executar o agente que nomeia os chats.",
+        "noAgentAvailable": "Nenhum agente que nomeia os chats pode ser executado neste espaço de trabalho."
+      }
     }
   },
   "updates": {
@@ -21833,10 +21933,37 @@
       "automationHistory": "Histórico de automações",
       "onboarding": "Progresso da integração",
       "other": "Outro estado salvo do app"
+    },
+    "startupFailure": {
+      "noneFound": "(nada encontrado)",
+      "sqlitePath": "Caminho do SQLite: {{path}}",
+      "sectionsDamaged": "Parte do estado salvo deste perfil está danificada: {{sections}}. Todo o restante está intacto.",
+      "repairCommand": "Feche o Orca e execute `{{command}}` para substituir apenas as partes danificadas a partir dos backups e manter todo o restante. O Orca guarda uma cópia do arquivo danificado.",
+      "restoreWholeBackup": "Para restaurar um backup completo em vez disso, execute `{{exportsCommand}}` e depois `{{rollbackCommand}}`.",
+      "sqliteUnreadable": "O Orca não consegue abrir o perfil ativo com segurança porque seu estado SQLite está ilegível.",
+      "legacyJsonPath": "Caminho do JSON legado: {{path}}",
+      "retainedBackups": "Backups do SQLite mantidos:",
+      "retainedExports": "Exportações JSON mantidas:",
+      "chooseRecoveryArtifact": "Feche o Orca, execute `{{command}}` e escolha um artefato de recuperação comprovadamente íntegro.",
+      "restoreCommands": "Restaure o SQLite com `{{backupCommand}}` ou uma exportação JSON com `{{revisionCommand}}`.",
+      "authorityAmbiguous": "O Orca não consegue determinar com segurança qual estado do perfil é o válido: {{detail}}",
+      "authorityBothPreserved": "Uma compilação mais antiga pode ter alterado o arquivo JSON. As duas cópias são preservadas; nenhuma é selecionada automaticamente.",
+      "authorityCopyFirst": "Feche o Orca e copie o diretório do perfil antes de escolher qual estado manter.",
+      "authorityKeepJson": "Para manter o JSON atual, incluindo edições de uma compilação mais antiga, execute `{{command}}`. Isso arquiva as duas cópias sem mesclar o conteúdo delas.",
+      "authorityInspect": "Execute `{{command}}` para inspecionar os pontos de recuperação mantidos.",
+      "authorityRestore": "Use `{{backupCommand}}` ou `{{revisionCommand}}` somente depois de selecionar o estado que deseja restaurar.",
+      "newerSchema": "Este perfil foi salvo por uma versão mais recente do Orca. Abra-o com essa versão ou uma posterior. Seu perfil não foi alterado.",
+      "revisionConflict": "O perfil ativo foi alterado enquanto o Orca iniciava. Feche os outros processos do Orca que usam este perfil e reinicie o Orca.",
+      "writerUnavailable": "O Orca não conseguiu iniciar o salvamento do perfil. Reinicie o Orca; se o problema continuar, repare ou reinstale esta compilação.",
+      "publicationUnavailable": "O Orca não conseguiu salvar o estado do perfil com segurança em {{directory}}.",
+      "publicationNeedsHardLinks": "Este local precisa oferecer suporte a links físicos, e o Orca precisa de permissão para criá-los.",
+      "publicationMoveData": "Feche o Orca e o orcad antes de verificar as permissões da pasta ou mover todo o diretório de dados do Orca para um sistema de arquivos local gravável que ofereça suporte a links físicos, como APFS, NTFS ou ext4.",
+      "publicationKeepFiles": "Mantenha o diretório original e todos os arquivos de recuperação."
     }
   },
   "startupFailure": {
-    "title": "Não foi possível iniciar o Orca"
+    "title": "Não foi possível iniciar o Orca",
+    "finishFailed": "O Orca não conseguiu concluir a inicialização: {{detail}}"
   },
   "browserExtensions": {
     "permission": {
@@ -22269,6 +22396,22 @@
         "error": "A configuração do projeto falhou no host selecionado para a automação.",
         "unsupported": "O host selecionado para a automação não oferece suporte a este projeto."
       }
+    },
+    "extraAgentArgs": {
+      "errors": {
+        "tooLarge": "Os argumentos extras devem ter no máximo 4 KB.",
+        "controlCharacters": "Os argumentos extras não podem conter caracteres de controle nem quebras de linha.",
+        "invalid": "Os argumentos extras são inválidos: {{detail}}",
+        "shellSyntax": "{{text}} usa sintaxe de shell que não é permitida nos argumentos extras.",
+        "terminator": "\"--\" não é permitido nos argumentos extras.",
+        "notAnOption": "\"{{token}}\" não é uma opção. Os argumentos extras de {{agent}} aceitam apenas: {{allowed}}.",
+        "optionNotAllowed": "\"{{option}}\" não é permitido nos argumentos extras de {{agent}}. Opções permitidas: {{allowed}}.",
+        "missingValue": "\"{{option}}\" precisa de um valor.",
+        "valueNotAllowed": "\"{{option}} {{value}}\" não é permitido. Os argumentos extras de {{agent}} aceitam apenas \"{{option}} {{prefix}}<level>\".",
+        "modelRepeated": "Os argumentos extras definem o modelo mais de uma vez.",
+        "effortRepeated": "Os argumentos extras definem o esforço mais de uma vez."
+      },
+      "hostUpdateRequired": "Atualize o Orca neste host para usar argumentos extras."
     }
   },
   "codeHost": {
@@ -22439,5 +22582,79 @@
         "title": "PDFs, imagens, CSV, Markdown"
       }
     }
+  },
+  "setupScriptPrompt": {
+    "candidateLabels": {
+      "codexEnvironment": "Ambiente do Codex",
+      "packageManager": "gerenciador de pacotes"
+    }
+  },
+  "emulator": {
+    "errors": {
+      "disabled": "O Emulador Mobile está desativado nas Configurações.",
+      "notAvailable": "O Emulador Mobile não está disponível.",
+      "noSession": "Nenhuma sessão de emulador está ativa",
+      "noDeviceSpecified": "Nenhum dispositivo de emulador especificado. Escolha um dispositivo padrão em Configurações > Emulador Mobile ou informe um dispositivo.",
+      "workspaceChanged": "O espaço de trabalho mudou durante a inicialização do emulador. Reconecte o emulador.",
+      "noIosSimulators": "Nenhum simulador iOS encontrado. Adicione um em Xcode Settings > Platforms.",
+      "simctlUnavailable": "xcrun simctl não está disponível.",
+      "simulatorToolsUnavailable": "As ferramentas do Xcode Simulator não estão disponíveis. Instale a versão completa do Xcode, abra-o uma vez e selecione-o com `sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer`.",
+      "requiresMacosXcode": "O Simulador iOS requer macOS com Xcode Command Line Tools.",
+      "simulatorNotFound": "Simulador {{udid}} não encontrado. Crie um em Xcode > Window > Devices and Simulators.",
+      "serveSimUnavailable": "serve-sim não está disponível.",
+      "serveSimNoEndpoints": "serve-sim não retornou endpoints de streaming.",
+      "serveSimEndpointUnreachable": "serve-sim foi iniciado, mas seu endpoint de streaming não está acessível.",
+      "androidSdkMissing": "Android SDK não encontrado. Instale o Android Studio e defina ANDROID_HOME.",
+      "adbUnavailable": "adb não está disponível.",
+      "noAndroidDevices": "Nenhum dispositivo Android ou AVD encontrado. Crie um no Android Studio.",
+      "androidDeviceNotRunning": "O dispositivo Android \"{{device}}\" não está em execução. Inicie-o primeiro.",
+      "unknownDeviceOrAvd": "\"{{device}}\" não é um dispositivo em execução nem um AVD conhecido.",
+      "avdBootTimeout": "O AVD \"{{avdName}}\" não terminou de inicializar a tempo.",
+      "scrcpyDownloadFailed": "Não foi possível baixar o servidor scrcpy: {{detail}}",
+      "scrcpyServerInvalid": "O servidor scrcpy baixado era inválido ou estava incompleto."
+    },
+    "pane": {
+      "listDevicesFailed": "Não foi possível listar os dispositivos de emulador.",
+      "noDevices": "Nenhum dispositivo de emulador encontrado. Adicione um Simulador iOS no Xcode ou um dispositivo virtual Android no Android Studio.",
+      "startFailed": "Não foi possível iniciar o emulador. Verifique se o Xcode (iOS) ou o Android Studio (Android) está configurado e tente outro dispositivo.",
+      "shutdownFailed": "Não foi possível desligar o emulador. Tente novamente ou encerre-o pelo gerenciador de emuladores."
+    },
+    "settings": {
+      "availabilityCheckFailed": "Não foi possível verificar a disponibilidade do emulador."
+    }
+  },
+  "ephemeralVm": {
+    "errors": {
+      "repoNotFound": "Repositório não encontrado: {{repoId}}",
+      "remoteRepoUnsupported": "Na v1, as receitas de VM efêmeras são executadas no host local do aplicativo desktop.",
+      "recipeNotFound": "Receita não encontrada: {{recipeId}}",
+      "runtimeNotFound": "Runtime de VM efêmera desconhecido: {{runtimeId}}",
+      "runtimeRepoMissing": "O runtime de VM efêmera não tem ID de repositório: {{runtimeId}}",
+      "provisionCancelled": "Provisionamento cancelado.",
+      "startRefUnresolved": "Não foi possível resolver a referência inicial da raiz provisionada: {{ref}}",
+      "defaultStartRefUnresolved": "Não foi possível resolver uma referência inicial padrão para a raiz provisionada.",
+      "recipeExited": "A receita terminou com o código {{exitCode}}.",
+      "recipeResultMissing": "A receita não produziu nenhum resultado JSON.",
+      "recipeResultNotJsonObject": "A saída stdout da receita deve ser um único objeto JSON.",
+      "recipeResultPairingCodeInvalid": "O campo pairingCode do resultado da receita não é um código de pareamento válido do Orca.",
+      "recipeResultProjectRootNotAbsolute": "O campo projectRoot do resultado da receita deve ser um caminho absoluto no runtime.",
+      "provisionedRootResultRequired": "Receitas de raiz provisionada devem retornar schemaVersion 2 com checkoutMode \"provisioned-root\".",
+      "provisionedRootNotConfigured": "O resultado da receita solicita um checkout com raiz provisionada, mas a receita não está configurada para isso.",
+      "destroyExited": "A destruição terminou com o código {{exitCode}}.",
+      "destroyFailed": "Falha na destruição.",
+      "destroyDisabled": "A destruição está desativada para esta receita.",
+      "cleanupStopped": "Limpeza interrompida pelo usuário.",
+      "cleanupInterrupted": "A limpeza foi interrompida. Tente a limpeza novamente para continuar.",
+      "sshTargetRemoveFailed": "Não foi possível remover o destino SSH oculto.",
+      "recipeExitedWithoutCode": "A receita terminou com um código desconhecido.",
+      "destroyExitedWithoutCode": "A destruição terminou com um código desconhecido."
+    }
+  },
+  "installDirAcl": {
+    "cause": "As permissões do Windows na pasta de instalação do Orca impedem que os próprios processos em sandbox leiam os arquivos distribuídos com o aplicativo.",
+    "repaired": "O Orca corrigiu as permissões. Recarregue para aplicá-las.",
+    "repairing": "O Orca está corrigindo as permissões.",
+    "repairFailed": "O Orca não conseguiu corrigi-las, o que geralmente significa que a pasta exige permissões de administrador.",
+    "runCommands": "Execute estes comandos em um Prompt de Comando como administrador e abra o Orca novamente:"
   }
 }
