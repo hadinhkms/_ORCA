@@ -769,7 +769,6 @@
 4 test-no-wall-clock:src/cli/runtime/serve-bundle-park.test.ts
 5 test-no-wall-clock:src/cli/runtime/serve-pid1-init-reaper.test.ts
 1 test-no-wall-clock:src/cli/runtime/status-caller.test.ts
-2 test-no-wall-clock:src/cli/runtime/status.test.ts
 1 test-no-wall-clock:src/main/acp/acp-structured-mail-admission.test.ts
 2 test-no-wall-clock:src/main/agent-hooks/managed-hook-timeout.test.ts
 2 test-no-wall-clock:src/main/agent-hooks/manual-compact-hook-stream.test.ts
@@ -882,7 +881,6 @@
 2 test-no-wall-clock:src/main/ipc/native-chat-subscribe-lifecycle.test.ts
 2 test-no-wall-clock:src/main/ipc/native-chat.test.ts
 1 test-no-wall-clock:src/main/ipc/pty/provider/liveness-inventory.test.ts
-1 test-no-wall-clock:src/main/ipc/pty/runtime/kill-legacy-relay-bridged-exit.test.ts
 2 test-no-wall-clock:src/main/ipc/pty/runtime/kill-legacy-relay-bridged.test.ts
 3 test-no-wall-clock:src/main/ipc/runtime-environments/runtime-environment-request-connections.test.ts
 1 test-no-wall-clock:src/main/ipc/runtime-environments/runtime-environments-pairing.test.ts
