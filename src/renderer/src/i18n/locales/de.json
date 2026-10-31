@@ -210,6 +210,11 @@
     },
     "cardProperties": {
       "agentModel": "Agentenmodell"
+    },
+    "wslHostOffer": {
+      "title": "{{distro}} als Host ausführen (empfohlen)",
+      "why": "Git, Dateien und Terminals laufen dann nativ in Linux statt über die Windows-Dateifreigabe.",
+      "accept": "Als Host ausführen"
     }
   },
   "app": {
@@ -653,7 +658,7 @@
       },
       "userAgent": {
         "title": "Browser-Identität",
-        "description": "Den User-Agent für alle Browser-Profile und Seiten auswählen. Der Modus „Nativ“ deaktiviert die Google-Anmeldung. Änderungen werden nach einem Neustart wirksam.",
+        "description": "Den User-Agent für alle Browser-Profile und Seiten auswählen. Änderungen werden nach einem Neustart wirksam.",
         "remoteUnsupported": "Die Browser-Identität auf dem Remote-Host mit der Orca-CLI verwalten.",
         "loading": "Wird geladen…",
         "resetRequired": "Die Identitätsdaten müssen vor einer Änderung ausdrücklich zurückgesetzt werden.",
@@ -661,7 +666,7 @@
         "optionClean": "Bereinigt",
         "optionCleanTooltip": "Entfernt Orca- und Electron-Tokens zur Übereinstimmung mit importierten Chrome-Sitzungen.",
         "optionNative": "Nativ",
-        "optionNativeTooltip": "Behält die integrierte Electron-Identität für Websites bei, die die bereinigte Identität ablehnen. Die Google-Anmeldung ist im Modus „Nativ“ nicht verfügbar.",
+        "optionNativeTooltip": "Behält die integrierte Electron-Identität für Websites bei, die die bereinigte Identität ablehnen.",
         "restartRequired": "Neustart erforderlich",
         "unavailable": "Die Browser-Identität ist nicht verfügbar."
       },
@@ -7129,13 +7134,15 @@
           "distro": "Distribution",
           "loading": "WSL-Distributionen werden gesucht…",
           "placeholder": "Distribution auswählen",
-          "none": "Keine WSL-Distributionen gefunden. Installation mit: wsl --install",
           "stoppedHint": "{{value0}} ist gestoppt. Das Hinzufügen startet die Distribution.",
           "addingHint": "Der Orca-Server wird in der Distribution installiert und gestartet. Beim ersten Mal kann dies eine Minute dauern.",
           "adding": "Wird eingerichtet…",
           "startAndAdd": "Starten und hinzufügen",
           "add": "Host hinzufügen",
-          "refresh": "Aktualisieren"
+          "refresh": "Aktualisieren",
+          "wsl1Reason": "WSL 1 kann keinen Orca-Host ausführen; konvertieren mit {{command}}",
+          "noWsl2Title": "Keine WSL-2-Distributionen gefunden",
+          "noWsl2Install": "Installiere eine in einem Windows-Terminal mit {{command}} und wähle dann Aktualisieren."
         },
         "wslHostRowStatus": {
           "connecting": "Wird gestartet",
@@ -11896,8 +11903,7 @@
         "PluginInstallDialog": {
           "localRequired": "Den Plugin-Ordnerpfad eingeben.",
           "gitUrlRequired": "Eine Repository-URL eingeben.",
-          "gitUrlInvalid": "Eine HTTPS- oder SSH-Git-URL verwenden. Ausführbare Git-Hilfsprotokolle sind nicht zulässig.",
-          "gitRefRequired": "Eine explizite #ref (Tag oder Commit) hinzufügen, damit die Installationsversion fixiert ist – zum Beispiel #v0.1.0.",
+          "gitUrlInvalid": "Einen Repository-Link wie https://github.com/owner/repo, owner/repo oder eine SSH-URL verwenden.",
           "title": "Plugin installieren",
           "description": "Bei der Installation wird das Plugin in Orca kopiert und seine Berechtigungen werden zur Prüfung angezeigt. Plugin-Code wird erst nach der Aktivierung ausgeführt.",
           "source": "Installationsquelle",
@@ -11907,12 +11913,23 @@
           "localPlaceholder": "/Users/you/plugins/my-plugin oder C:\\Users\\you\\plugins\\my-plugin",
           "localHelp": "Vollständiger Pfad zu einem Ordner auf diesem Computer, der orca-plugin.json enthält. Der Pfad wird genau wie eingegeben verwendet.",
           "gitLabel": "Repository-URL mit #ref",
-          "gitPlaceholder": "https://git.example/acme/orca-notes#v0.1.0",
-          "gitHelp": "Eine explizite #ref – einen Tag oder Commit – anhängen, damit die Installationsversion fixiert ist. Funktioniert mit GitHub, GitLab und jedem Git-Host.",
+          "gitPlaceholder": "https://github.com/acme/orca-notes",
+          "gitHelp": "Einen Repository-, Release- oder Tag-Link einfügen. Ohne #tag oder #commit verwendet Orca den neuesten Versions-Tag.",
           "cancel": "Abbrechen",
           "installing": "Wird installiert…",
           "install": "Installieren",
-          "installFailed": "Plugin-Installation fehlgeschlagen. Die Quelle prüfen und erneut versuchen."
+          "installFailed": "Plugin-Installation fehlgeschlagen. Die Quelle prüfen und erneut versuchen.",
+          "checking": "Wird geprüft…",
+          "continue": "Weiter",
+          "gitUrlCredentials": "Benutzername oder Token aus der URL entfernen. Orca verwendet deine Git-Anmeldung.",
+          "gitRefInvalid": "Die Version nach # ist kein gültiger Tag-, Branch- oder Commit-Name.",
+          "gitRefNotFound": "Dieses Repository hat keinen Tag oder Branch namens {{value0}}.",
+          "gitUnreachable": "Dieses Repository konnte nicht gelesen werden. Die URL prüfen und ob dein Git-Konto Zugriff hat.",
+          "resolvedLatestTag": "Installiert {{value0}}, die neueste Version, bei Commit {{value1}}.",
+          "resolvedTag": "Installiert {{value0}} bei Commit {{value1}}.",
+          "resolvedBranch": "Installiert Branch {{value0}} im aktuellen Stand, bei Commit {{value1}}.",
+          "resolvedCommit": "Installiert Commit {{value0}}.",
+          "resolvedDefaultBranch": "Kein Versions-Tag gefunden, daher wird der neueste Commit {{value0}} installiert."
         },
         "PluginKeybindingConsentPreview": {
           "worktree": "Wird nur ausgeführt, wenn ein Arbeitsbereich aktiv ist."
@@ -12016,7 +12033,8 @@
           "invalidManifest": "orca-plugin.json ist ungültig. Die Datei korrigieren und anschließend die Plugins aktualisieren.",
           "installedManifestUnloadable": "Diese Version kann in dieser Orca-Version nicht geladen werden. Aktualisieren oder neu installieren.",
           "invalidArtifact": "Eine deklarierte Datei für einen Hintergrundprozess oder ein Panel fehlt oder ist unsicher. Die Plugin-Dateien korrigieren und anschließend aktualisieren.",
-          "consentChanged": "Das Plugin wurde während der Prüfung geändert. Diesen Dialog schließen und die aktualisierten Berechtigungen prüfen."
+          "consentChanged": "Das Plugin wurde während der Prüfung geändert. Diesen Dialog schließen und die aktualisierten Berechtigungen prüfen.",
+          "installGitMoved": "Das Repository hat sich geändert, nachdem Orca es geprüft hat. Erneut versuchen."
         },
         "plugins": {
           "search": {
@@ -13009,7 +13027,8 @@
           "previous": "Vorherige",
           "updated": "Aktualisiert",
           "license": "Lizenz",
-          "whatsNew": "Neuigkeiten"
+          "whatsNew": "Neuigkeiten",
+          "installs": "Installationen"
         },
         "PluginDetailPage": {
           "back": "Plugins",
@@ -13149,6 +13168,24 @@
           "assignedLight": "{{value0}} als helles Design festgelegt",
           "assignedDark": "{{value0}} als dunkles Design festgelegt",
           "saveFailed": "Das Design konnte nicht gespeichert werden. Versuche es erneut."
+        },
+        "PluginInstallTrustDialog": {
+          "titleFolder": "Stellen Sie sicher, dass Sie diesem Ordner vertrauen",
+          "title": "Stellen Sie sicher, dass Sie {{value0}} vertrauen",
+          "theme": "Dieses Design stammt von {{value0}}, nicht von Orca. Installieren Sie nur Plugins von Autoren, denen Sie vertrauen.",
+          "content": "Dieses Plugin stammt von {{value0}}, nicht von Orca. Installieren Sie nur Plugins von Autoren, denen Sie vertrauen.",
+          "translations": "Diese Übersetzung stammt von {{value0}}, nicht von Orca. Übersetzungen können jeden Text in Orca ändern. Installieren Sie sie daher nur von Autoren, denen Sie vertrauen.",
+          "code": "Dieses Plugin stammt von {{value0}}, nicht von Orca. Es führt den Code des Herausgebers in Orca aus. Installieren Sie es daher nur, wenn Sie {{value0}} vertrauen.",
+          "git": "Orca hat dieses Repository nicht geprüft. Ein Plugin daraus kann den Code seines Herausgebers in Orca ausführen. Installieren Sie es daher nur, wenn Sie {{value0}} vertrauen.",
+          "localFolder": "Dies ist ein nicht verifizierter lokaler Ordner. Ein Plugin daraus kann Code in Orca ausführen. Installieren Sie es daher nur, wenn Sie seiner Herkunft vertrauen.",
+          "devFolder": "Dies ist ein nicht verifizierter lokaler Ordner. Orca lädt sein Plugin unverändert, und spätere Codeänderungen laufen ohne Nachfrage. Fügen Sie daher nur Ordner hinzu, denen Sie vertrauen.",
+          "publisher": "Herausgeber",
+          "repository": "Repository",
+          "folder": "Ordner",
+          "catalog": "Katalog",
+          "cancel": "Abbrechen",
+          "addFolder": "Ordner hinzufügen",
+          "install": "Installieren"
         }
       },
       "right": {
@@ -15082,27 +15119,10 @@
         },
         "slides": {
           "HomeSlide": {
-            "a7d9e2c44d": "7 Tage",
-            "a3d5476811": "5 h",
-            "8a350a4784": "Kontonutzung",
-            "e27fdaee51": "Arbeitsbereich erstellen",
-            "4405f3c440": "Desktop koppeln",
-            "0b00c98506": "Schnellaktionen",
-            "0bad5b07c8": "GitHub und Linear",
-            "d047197480": "GitHub · Linear",
             "a4c3f7b7aa": "Aufgaben",
-            "d33d7a9c29": "orca  ·  feat/mobile-page",
-            "25d6e8a491": "feat/mobile-page",
-            "c791677f2f": "Fortsetzen",
             "cf3f98fa3f": "Getrennt",
-            "091355da3d": "M1 Mini · zu Hause",
-            "0bc1881bc4": "Verbunden · 40 Worktrees · 5 aktiv",
             "19c212e25e": "MacBook Pro",
             "2f1a1d10c4": "Desktop-Computer",
-            "156db8a68a": "Erstellte PRs",
-            "4a40af029b": "Agentenzeit",
-            "00a6903322": "Gestartete Agenten",
-            "c0e2e9dcd9": "Willkommen zurück",
             "af761a0c0d": "Einstellungen",
             "5d94e8ddcc": "Orca"
           },
@@ -17576,7 +17596,8 @@
         },
         "capturedOwner": {
           "orphan": "Dieser Automatisierung fehlt ein Host zur Ausführung. Die Automatisierung löschen oder den zugehörigen Host erneut hinzufügen.",
-          "unfenced": "Orca auf diesem Host muss aktualisiert werden, bevor der Ausführungsverlauf angezeigt oder diese Automatisierung verwaltet werden kann. Geplante Ausführungen können auf dem Host weiterhin stattfinden."
+          "unfenced": "Orca auf diesem Host muss aktualisiert werden, bevor der Ausführungsverlauf angezeigt oder diese Automatisierung verwaltet werden kann. Geplante Ausführungen können auf dem Host weiterhin stattfinden.",
+          "hostReselection": "Bearbeite die Automatisierung und wähle ihren Host erneut aus, bevor du sie ausführst."
         },
         "hostStatus": {
           "authority": {
@@ -17754,6 +17775,9 @@
         "hostSummary": {
           "partialFailureOfHosts_one": "Laden fehlgeschlagen: {{failed}} von {{count}} Host",
           "partialFailureOfHosts_other": "Laden fehlgeschlagen: {{failed}} von {{count}} Hosts"
+        },
+        "automationTargetAvailability": {
+          "hostMismatch": "Der gespeicherte Ausführungshost stimmt nicht mehr mit dieser Projekteinrichtung überein."
         }
       },
       "agent": {
@@ -18658,6 +18682,9 @@
           "PluginsSectionDescription": {
             "openWith": "Öffnen mit (wenn der Fokus nicht in einem bearbeitbaren Feld liegt)"
           }
+        },
+        "pluginInstallCount": {
+          "installs": "{{value0}} Installationen"
         }
       }
     },
@@ -19071,7 +19098,10 @@
         "orcaStopCrash": "Orca auf {{machine}} wurde während dieser Antwort unerwartet beendet.",
         "orcaStopRemote": "Orca auf {{machine}} wurde während dieser Antwort gestoppt.",
         "orcaStopCanContinue": "Die Unterhaltung kann fortgesetzt werden.",
-        "orcaStopUnnamedServer": "dem entfernten Server"
+        "orcaStopUnnamedServer": "dem entfernten Server",
+        "permissionDenied": "{{agent}} hat die Berechtigung verweigert. Details anzeigen.",
+        "safetyReview": "{{agent}} hat eine Warnung zur Sicherheitsprüfung gemeldet. Details anzeigen.",
+        "truncatedResponse": "Anbieterantwort gekürzt (ursprüngliche Größe: {{bytes}} Bytes)."
       },
       "composer": {
         "send": "Senden",

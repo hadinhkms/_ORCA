@@ -222,7 +222,7 @@
       },
       "userAgent": {
         "title": "ブラウザのアイデンティティ",
-        "description": "すべてのブラウザプロファイルとページのユーザー Agent を選択します。ネイティブモードでは Google サインインが無効になります。変更は再起動後に有効になります。",
+        "description": "すべてのブラウザプロファイルとページのユーザー Agent を選択します。変更は再起動後に有効になります。",
         "remoteUnsupported": "Orca CLI を使用して、リモートホスト上のブラウザ ID を管理します。",
         "loading": "読み込み中…",
         "resetRequired": "ID データは変更する前に明示的にリセットする必要があります。",
@@ -230,7 +230,7 @@
         "optionClean": "クリーン",
         "optionCleanTooltip": "インポートされた Chrome セッションと一致するように Orca トークンと Electron トークンを削除します。",
         "optionNative": "ネイティブ",
-        "optionNativeTooltip": "クリーンアップされた ID を拒否するサイトのために Electron の組み込み ID を保持します。 Google サインインはネイティブモードでは利用できません。",
+        "optionNativeTooltip": "クリーンアップされた ID を拒否するサイトのために Electron の組み込み ID を保持します。",
         "restartRequired": "再起動が必要です",
         "unavailable": "ブラウザ ID が利用できません。"
       },
@@ -6509,13 +6509,15 @@
           "distro": "ディストリビューション",
           "loading": "WSL ディストリビューションを探しています…",
           "placeholder": "ディストリビューションを選択",
-          "none": "WSL ディストリビューションが見つかりません。次のコマンドでインストールできます: wsl --install",
           "stoppedHint": "{{value0}} は停止しています。追加すると起動します。",
           "addingHint": "ディストリビューション内に Orca サーバーをインストールして起動しています。初回は 1 分ほどかかることがあります。",
           "adding": "セットアップ中…",
           "startAndAdd": "起動して追加",
           "add": "ホストを追加",
-          "refresh": "更新"
+          "refresh": "更新",
+          "wsl1Reason": "WSL 1 では Orca ホストを実行できません。{{command}} で変換してください",
+          "noWsl2Title": "WSL 2 ディストリビューションが見つかりません",
+          "noWsl2Install": "Windows ターミナルで {{command}} を実行してインストールし、[更新] を選択してください。"
         },
         "wslHostRowStatus": {
           "connecting": "起動中",
@@ -11283,8 +11285,7 @@
         "PluginInstallDialog": {
           "localRequired": "プラグインフォルダーのパスを入力してください。",
           "gitUrlRequired": "リポジトリ URL を入力してください。",
-          "gitUrlInvalid": "HTTPS または SSH の Git URL を使用してください。",
-          "gitRefRequired": "#tag または #commit を追加してください (例: #v0.1.0)。",
+          "gitUrlInvalid": "https://github.com/owner/repo、owner/repo、または SSH URL のようなリポジトリリンクを使用してください。",
           "title": "プラグインをインストール",
           "description": "有効にするまで何も実行されません。",
           "source": "インストール元",
@@ -11294,12 +11295,23 @@
           "localPlaceholder": "プラグインフォルダーのパス",
           "localHelp": "orca-plugin.json があるフォルダー",
           "gitLabel": "リポジトリ URL",
-          "gitPlaceholder": "https://git.example/acme/orca-notes#v0.1.0",
-          "gitHelp": "#tag または #commit で終えるとバージョンを固定できます",
+          "gitPlaceholder": "https://github.com/acme/orca-notes",
+          "gitHelp": "リポジトリ、リリース、またはタグのリンクを貼り付けてください。#tag や #commit がない場合は最新のバージョンタグを使用します。",
           "cancel": "キャンセル",
           "installing": "インストール中…",
           "install": "インストール",
-          "installFailed": "プラグインのインストールに失敗しました。ソースを確認して再試行してください。"
+          "installFailed": "プラグインのインストールに失敗しました。ソースを確認して再試行してください。",
+          "checking": "確認中…",
+          "continue": "続行",
+          "gitUrlCredentials": "URL からユーザー名またはトークンを削除してください。Orca はお使いの Git の認証情報を使用します。",
+          "gitRefInvalid": "# の後のバージョンは有効なタグ、ブランチ、またはコミット名ではありません。",
+          "gitRefNotFound": "このリポジトリには {{value0}} という名前のタグまたはブランチがありません。",
+          "gitUnreachable": "このリポジトリを読み取れませんでした。URL と、Git アカウントがアクセスできるかを確認してください。",
+          "resolvedLatestTag": "最新バージョンの {{value0}} (コミット {{value1}}) をインストールします。",
+          "resolvedTag": "{{value0}} (コミット {{value1}}) をインストールします。",
+          "resolvedBranch": "ブランチ {{value0}} の現在の状態 (コミット {{value1}}) をインストールします。",
+          "resolvedCommit": "コミット {{value0}} をインストールします。",
+          "resolvedDefaultBranch": "バージョンタグが見つからないため、最新のコミット {{value0}} をインストールします。"
         },
         "PluginKeybindingConsentPreview": {
           "worktree": "ワークスペース内のみ"
@@ -11469,7 +11481,8 @@
           "invalidManifest": "orca-plugin.jsonが無効です。修正してからプラグインを更新してください。",
           "installedManifestUnloadable": "このバージョンはこの Orca では読み込めません。更新するか再インストールしてください。",
           "invalidArtifact": "ワーカーまたはパネルのファイルが見つからないか安全ではありません。修正してから更新してください。",
-          "consentChanged": "確認中にこのプラグインが変更されました。もう一度確認してください。"
+          "consentChanged": "確認中にこのプラグインが変更されました。もう一度確認してください。",
+          "installGitMoved": "Orca が確認した後にリポジトリが変更されました。もう一度お試しください。"
         },
         "plugins": {
           "search": {
@@ -12540,7 +12553,8 @@
           "whatsNew": "新機能",
           "hashCopied": "コンテンツハッシュをコピーしました",
           "hashCopyFailed": "ハッシュをコピーできませんでした。",
-          "readme": "{{value0}} で README を読む"
+          "readme": "{{value0}} で README を読む",
+          "installs": "インストール数"
         },
         "PluginListEmptyStates": {
           "noFilterMatches": "これらのフィルターに一致するプラグインはありません",
@@ -12667,6 +12681,24 @@
           "manyDescription": "確認するまで更新されません。",
           "review": "確認",
           "dismiss": "閉じる"
+        },
+        "PluginInstallTrustDialog": {
+          "titleFolder": "このフォルダーを信頼できることを確認してください",
+          "title": "{{value0}} を信頼できることを確認してください",
+          "theme": "このテーマは Orca ではなく {{value0}} によるものです。信頼できる作者のプラグインだけをインストールしてください。",
+          "content": "このプラグインは Orca ではなく {{value0}} によるものです。信頼できる作者のプラグインだけをインストールしてください。",
+          "translations": "この翻訳は Orca ではなく {{value0}} によるものです。翻訳は Orca 内のあらゆるテキストを変更できるため、信頼できる作者のものだけをインストールしてください。",
+          "code": "このプラグインは Orca ではなく {{value0}} によるものです。公開元のコードを Orca 内で実行するため、{{value0}} を信頼できる場合にのみインストールしてください。",
+          "git": "Orca はこのリポジトリを確認していません。ここからのプラグインは公開元のコードを Orca 内で実行できるため、{{value0}} を信頼できる場合にのみインストールしてください。",
+          "localFolder": "これは未検証のローカルフォルダーです。ここからのプラグインは Orca 内でコードを実行できるため、入手元を信頼できる場合にのみインストールしてください。",
+          "devFolder": "これは未検証のローカルフォルダーです。Orca はそのプラグインをそのまま読み込み、以降のコード変更は確認なしで実行されます。信頼できるフォルダーだけを追加してください。",
+          "publisher": "公開元",
+          "repository": "リポジトリ",
+          "folder": "フォルダー",
+          "catalog": "カタログ",
+          "cancel": "キャンセル",
+          "addFolder": "フォルダーを追加",
+          "install": "インストール"
         }
       },
       "right": {
@@ -14565,27 +14597,10 @@
         },
         "slides": {
           "HomeSlide": {
-            "a7d9e2c44d": "7日",
-            "a3d5476811": "5時間",
-            "8a350a4784": "アカウントの使用状況",
-            "e27fdaee51": "新規ワークスペース",
-            "4405f3c440": "デスクトップのペアリング",
-            "0b00c98506": "クイック操作",
-            "0bad5b07c8": "GitHub と Linear",
-            "d047197480": "GitHub · Linear",
             "a4c3f7b7aa": "タスク",
-            "d33d7a9c29": "orca  ·  feat/mobile-page",
-            "25d6e8a491": "feat/mobile-page",
-            "c791677f2f": "再開",
             "cf3f98fa3f": "切断済み",
-            "091355da3d": "M1ミニ・ホーム",
-            "0bc1881bc4": "接続済み · 40 ワークツリー · 5 アクティブ",
             "19c212e25e": "MacBook Pro",
             "2f1a1d10c4": "デスクトップ",
-            "156db8a68a": "作成された PR",
-            "4a40af029b": "Agent 時間",
-            "00a6903322": "Agent が生成されました",
-            "c0e2e9dcd9": "おかえり",
             "af761a0c0d": "設定",
             "5d94e8ddcc": "Orca"
           },
@@ -17087,7 +17102,8 @@
         },
         "capturedOwner": {
           "orphan": "このオートメーションには実行するホストがありません。削除するか、所属するホストを再度追加してください。",
-          "unfenced": "実行履歴を表示したり、この自動化を管理したりするには、このホスト上の Orca を更新する必要があります。スケジュールされた実行はホスト上で引き続き続行される可能性があります。"
+          "unfenced": "実行履歴を表示したり、この自動化を管理したりするには、このホスト上の Orca を更新する必要があります。スケジュールされた実行はホスト上で引き続き続行される可能性があります。",
+          "hostReselection": "オートメーションを編集し、実行する前にホストを選択し直してください。"
         },
         "hostStatus": {
           "authority": {
@@ -17215,6 +17231,9 @@
         },
         "hostSummary": {
           "partialFailureOfHosts_other": "{{count}} 台中 {{failed}} 台のホストを読み込めませんでした"
+        },
+        "automationTargetAvailability": {
+          "hostMismatch": "保存された実行ホストが、このプロジェクトの設定と一致しなくなりました。"
         }
       },
       "agent": {
@@ -18152,6 +18171,9 @@
           "PluginsSectionDescription": {
             "openWith": "次で開く（編集可能なフィールドにフォーカスがない場合）"
           }
+        },
+        "pluginInstallCount": {
+          "installs": "{{value0}} 件のインストール"
         }
       }
     },
@@ -18837,7 +18859,10 @@
         "orcaStopCrash": "この応答の途中で、{{machine}} の Orca が予期せず停止しました。",
         "orcaStopRemote": "この応答の途中で、{{machine}} の Orca が停止しました。",
         "orcaStopCanContinue": "この会話で続行できます。",
-        "orcaStopUnnamedServer": "リモートサーバー"
+        "orcaStopUnnamedServer": "リモートサーバー",
+        "permissionDenied": "{{agent}} が権限を拒否しました。詳細を表示。",
+        "safetyReview": "{{agent}} が安全性レビューの警告を報告しました。詳細を表示。",
+        "truncatedResponse": "プロバイダーの応答は切り詰められています（元のサイズ：{{bytes}} バイト）。"
       },
       "providerFrame": {
         "byteCount_other": "{{count}} バイト"
@@ -20202,6 +20227,11 @@
     },
     "cardProperties": {
       "agentModel": "Agent のモデル"
+    },
+    "wslHostOffer": {
+      "title": "{{distro}} をホストとして実行（推奨）",
+      "why": "Git、ファイル、ターミナルが Windows のファイル共有を経由せず、Linux 上でネイティブに動作します。",
+      "accept": "ホストとして実行"
     }
   },
   "editor": {
