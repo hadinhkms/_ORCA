@@ -14,7 +14,7 @@ import { createRootDispatch } from './orchestration/db/root-dispatch-test-fixtur
 import { reconcileLifecycleMessage } from './orchestration/lifecycle-reconciliation'
 import { RuntimeOrchestrationSenderNames } from './runtime-orchestration-sender-names'
 import { structuredMailSource } from './orchestration/structured-mail-source'
-import { structuredAgentSessionTabId } from '../../shared/structured-agent-session-projection'
+import { structuredAgentSessionTabId } from '../../shared/agent-session/view/structured-agent-session-projection'
 import type { MessageRow } from './orchestration/types'
 import { parseStartOptions } from './rpc/methods/orchestration/worker/worker-earlier-work'
 
@@ -32,7 +32,7 @@ type Session = NonNullable<
   >
 >
 type SenderNamingDeps = ConstructorParameters<typeof RuntimeOrchestrationSenderNames>[0]
-type HookRow = ReturnType<SenderNamingDeps['getAgentStatusSnapshotForPane']>[number]
+type HookRow = NonNullable<ReturnType<SenderNamingDeps['getAgentStatusSnapshotForPane']>>[number]
 
 let db: OrchestrationDb
 let session: Session

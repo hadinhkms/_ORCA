@@ -1,4 +1,4 @@
-import { AGENT_SESSION_PASTED_IMAGE_SUFFIX_SOURCE } from './agent-session-attachments'
+import { AGENT_SESSION_PASTED_IMAGE_SUFFIX_SOURCE } from './agent-session/agent-session-attachments'
 import { getRuntimePathBasename } from './cross-platform-path'
 import type { NativeChatImageRefBlock } from './native-chat/native-chat-types'
 
