@@ -379,7 +379,9 @@
     },
     "sessionOptionRows": {
       "defaultMarker": "Par défaut",
-      "notReportedMarker": "Non communiqué"
+      "notReportedMarker": "Non communiqué",
+      "moreModels": "Plus de modèles",
+      "fewerModels": "Moins de modèles"
     },
     "sessionOptionSegments": {
       "dispatchUnconfirmed": "Envoyé à l'agent — non confirmé"
@@ -1246,6 +1248,10 @@
       "previewFile": "Afficher l'aperçu du fichier {{name}}",
       "retryLoading": "Réessayer de charger {{path}}",
       "unavailable": "Indisponible sur mobile"
+    },
+    "fileExplorerRowActions": {
+      "copyName": "Copier le nom",
+      "copyRelativePath": "Copier le chemin relatif"
     },
     "fileMarkdownPreview": {
       "copyLoadedSource": "Copier le code source Markdown chargé",
