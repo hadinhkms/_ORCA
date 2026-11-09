@@ -15,7 +15,7 @@ import { useStructuredLegacyLaunchStop } from '@/lib/agent-session/launch/struct
 import {
   useStructuredAgentSessionHostQueuesCommands,
   useStructuredAgentSessionHostQueuesMessagesState
-} from '@/runtime/structured-agent-session-host-capability'
+} from '@/runtime/native-chat/host-capabilities/structured-agent-session-host-capability'
 import { structuredAgentSessionStopControl } from '../../../../../../shared/agent-session/view/structured-agent-session-stop-control'
 import type { AgentSessionPromptResponse } from '../../../../../../shared/agent-session/agent-session-question-answer'
 import {
@@ -248,6 +248,7 @@ export function useStructuredAgentSession(args: StructuredAgentSessionViewArgs) 
       rewindInFlight: rewind.blockedRef,
       sends: pending,
       items: () => stateRef.current.items,
+      onClearSent: contextClear.onClearSent,
       send: commandWrite
     }),
     journalItems: transcriptItems,
