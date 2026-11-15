@@ -75,6 +75,8 @@ enum ProviderError: Error {
             return message
         }
     }
+
+    static let screenLocked = ProviderError.coded("screen_locked", SessionLockProbe.lockedMessage)
 }
 
 struct AppDescriptor {
@@ -133,13 +135,15 @@ final class ElementRecord {
     let localFrame: CGRect?
     let actions: [String]
     let signature: String
+    let disabled: Bool
 
-    init(index: Int, element: AXUIElement, localFrame: CGRect?, actions: [String], signature: String) {
+    init(index: Int, element: AXUIElement, localFrame: CGRect?, actions: [String], signature: String, disabled: Bool) {
         self.index = index
         self.element = element
         self.localFrame = localFrame
         self.actions = actions
         self.signature = signature
+        self.disabled = disabled
     }
 }
 
@@ -283,6 +287,8 @@ final class Provider {
             return providerHandshake()
         case "listApps":
             return ["apps": listApps().map(renderListedApp)]
+        case "launchApp":
+            return try launchApp(params: params)
         case "listWindows":
             return try listWindows(params: params)
         case "getAppState":
@@ -734,6 +740,7 @@ final class Provider {
                     "list": true,
                     "bundleIds": true,
                     "pids": true,
+                    "launch": true,
                 ],
                 "windows": [
                     "list": true,
@@ -802,6 +809,64 @@ final class Provider {
         }
     }
 
+    private func launchApp(params: [String: JSONValue]) throws -> [String: Any] {
+        let query = try requiredString(params, "app").trimmingCharacters(in: .whitespacesAndNewlines)
+        let activate = params["activate"]?.bool == true
+        // Why: Launch Services sends a running app a reopen event, and many apps answer it by opening a window.
+        if let running = listApps().first(where: { matches($0, query: query) }) {
+            try rejectBlockedApp(running)
+            return renderLaunch(running, launched: false)
+        }
+        guard let url = installedApplicationURL(query) else {
+            throw ProviderError.coded("app_not_found", "app '\(query)' is not running and no installed app has that name, bundle ID or path")
+        }
+        if let bundleId = Bundle(url: url)?.bundleIdentifier {
+            if blockedBundleIds.contains(bundleId) {
+                throw ProviderError.coded("app_blocked", "app '\(bundleId)' is blocked for safety")
+            }
+            // Why: a path or display-name query misses the running check above, and menu bar apps aren't listed.
+            if let running = NSRunningApplication.runningApplications(withBundleIdentifier: bundleId)
+                .first(where: { !$0.isTerminated }),
+                let app = appByPid(running.processIdentifier) {
+                return renderLaunch(app, launched: false)
+            }
+        }
+        let pid: pid_t
+        do {
+            pid = try BlockingAsync.run(timeout: 30, timeoutMessage: "launching '\(query)' timed out") {
+                let configuration = NSWorkspace.OpenConfiguration()
+                configuration.activates = activate
+                return try await NSWorkspace.shared.openApplication(at: url, configuration: configuration).processIdentifier
+            }
+        } catch let error as ProviderError {
+            throw error
+        } catch {
+            throw ProviderError.coded("app_launch_failed", "could not launch '\(query)': \(error.localizedDescription)")
+        }
+        guard let app = appByPid(pid) else {
+            throw ProviderError.coded("app_launch_failed", "'\(query)' exited right after it launched")
+        }
+        // Why: Launch Services reports the app once it checks in; activation, asked for or not, lands after it finishes launching.
+        let deadline = Date().addingTimeInterval(5)
+        while !app.app.isFinishedLaunching, !app.app.isTerminated, Date() < deadline {
+            Thread.sleep(forTimeInterval: 0.05)
+        }
+        if app.app.isTerminated {
+            throw ProviderError.coded("app_launch_failed", "'\(query)' quit while it was starting")
+        }
+        return renderLaunch(app, launched: true)
+    }
+
+    private func renderLaunch(_ app: AppDescriptor, launched: Bool) -> [String: Any] {
+        // Why: measured, not taken from the request; an app may activate itself however it was started.
+        let frontmost = NSWorkspace.shared.frontmostApplication?.processIdentifier == app.pid
+        return [
+            "app": ["name": app.name, "bundleId": jsonNullable(app.bundleId), "pid": Int(app.pid)],
+            "launched": launched,
+            "delivery": frontmost ? "foreground" : "background",
+        ]
+    }
+
     private func listWindows(params: [String: JSONValue]) throws -> [String: Any] {
         let app = try resolveApp(try requiredString(params, "app"))
         let windows = windowInventory(app: app, appElement: AXUIElementCreateApplication(app.pid)).windows
@@ -857,6 +922,10 @@ final class Provider {
         previousSnapshot: (CGWindowID) -> Snapshot?
     ) throws -> Snapshot {
         guard accessibilityTrustedSettled() else {
+            // Why: the lock can start mid-request, and macOS reports Accessibility as untrusted behind it.
+            if SessionLockProbe.isLocked() {
+                throw ProviderError.screenLocked
+            }
             // Why: agents retry failed observations. Only the explicit setup flow
             // should open macOS privacy prompts/settings; runtime calls stay quiet.
             throw ProviderError.coded(
@@ -1003,6 +1072,10 @@ final class Provider {
             "treeText": snapshot.treeText,
             "elementCount": snapshot.scope?.walkedIndexes.count ?? snapshot.elements.count,
             "focusedElementId": snapshot.focusedElementId as Any,
+            "disabledElementIndexes": snapshot.elements.values
+                .filter { $0.disabled && snapshot.scope?.walkedIndexes.contains($0.index) != false }
+                .map(\.index)
+                .sorted(),
             "truncation": [
                 "truncated": snapshot.truncated,
                 "maxNodes": TreeRenderer.maxNodes,
@@ -1469,6 +1542,28 @@ private func parsePid(_ query: String) -> pid_t? {
     return pid
 }
 
+/// An app that isn't running, by absolute path, bundle ID or bundle name in the usual install folders.
+private func installedApplicationURL(_ query: String) -> URL? {
+    let path = (query as NSString).expandingTildeInPath
+    if path.hasPrefix("/") {
+        return FileManager.default.fileExists(atPath: path) ? URL(fileURLWithPath: path) : nil
+    }
+    if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: query) {
+        return url
+    }
+    let bundleName = query.lowercased().hasSuffix(".app") ? query : "\(query).app"
+    let folders = [
+        "/Applications",
+        "/Applications/Utilities",
+        "/System/Applications",
+        "/System/Applications/Utilities",
+        NSHomeDirectory() + "/Applications",
+    ]
+    return folders
+        .map { URL(fileURLWithPath: $0).appendingPathComponent(bundleName) }
+        .first { FileManager.default.fileExists(atPath: $0.path) }
+}
+
 private func matches(_ app: AppDescriptor, query: String) -> Bool {
     app.name.caseInsensitiveCompare(query) == .orderedSame ||
         app.bundleId?.caseInsensitiveCompare(query) == .orderedSame
@@ -1551,6 +1646,9 @@ private func focusedWindow(appElement: AXUIElement, app: AppDescriptor, inventor
         }
         if let window = settledWindow, outcome.settled {
             return window
+        }
+        if SessionLockProbe.isLocked() {
+            throw ProviderError.screenLocked
         }
         var windows: CFTypeRef?
         if AXUIElementCopyAttributeValue(appElement, kAXWindowsAttribute as CFString, &windows) == .apiDisabled {
@@ -2626,7 +2724,8 @@ private final class TreeRenderer {
             element: element,
             localFrame: localFrame,
             actions: rawActions,
-            signature: elementSignature(node)
+            signature: elementSignature(node),
+            disabled: traits.contains("disabled")
         )
         if let focused, CFEqual(focused, element) {
             focusedElementId = index
@@ -2725,7 +2824,7 @@ extension TreeRenderer {
         )
         let renumbered = Dictionary(uniqueKeysWithValues: zip(walked.map(\.index), assignment.indexes))
         records = Dictionary(uniqueKeysWithValues: zip(walked, assignment.indexes).map { record, index in
-            (index, ElementRecord(index: index, element: record.element, localFrame: record.localFrame, actions: record.actions, signature: record.signature))
+            (index, ElementRecord(index: index, element: record.element, localFrame: record.localFrame, actions: record.actions, signature: record.signature, disabled: record.disabled))
         })
         lines = lines.map { StableElementIndexes.renumber(line: $0, indexes: renumbered) }
         focusedElementId = focusedElementId.flatMap { renumbered[$0] }
@@ -3301,7 +3400,11 @@ private final class AsyncBox<T>: @unchecked Sendable {
 }
 
 private enum BlockingAsync {
-    static func run<T>(timeout: TimeInterval, operation: @escaping @Sendable () async throws -> T) throws -> T {
+    static func run<T>(
+        timeout: TimeInterval,
+        timeoutMessage: String = "screenshot capture timed out",
+        operation: @escaping @Sendable () async throws -> T
+    ) throws -> T {
         let semaphore = DispatchSemaphore(value: 0)
         let box = AsyncBox<T>()
         let task = Task.detached {
@@ -3314,7 +3417,7 @@ private enum BlockingAsync {
         }
         guard semaphore.wait(timeout: .now() + timeout) == .success else {
             task.cancel()
-            throw ProviderError.coded("action_timeout", "screenshot capture timed out")
+            throw ProviderError.coded("action_timeout", timeoutMessage)
         }
         return try box.result!.get()
     }
@@ -4020,6 +4123,10 @@ private enum PermissionKind: CaseIterable {
     }
 
     func requestAndOpenSettings() {
+        // Why: the screen can lock after the setup helper started.
+        guard !SessionLockProbe.isLocked() else {
+            return
+        }
         switch self {
         case .accessibility:
             openAccessibilitySettings()
@@ -5038,6 +5145,11 @@ private func runPermissionCheck(
     initialPermission: PermissionKind? = nil,
     copy: PermissionWindowCopy
 ) {
+    // Why: a queued or cached-denial launch can start after the screen locks; Settings would open for nothing.
+    if SessionLockProbe.isLocked() {
+        fputs("\(SessionLockProbe.lockedMessage)\n", stderr)
+        exit(0)
+    }
     let app = NSApplication.shared
     let delegate = PermissionRuntime(initialPermission: initialPermission, copy: copy)
     app.delegate = delegate
@@ -5046,18 +5158,23 @@ private func runPermissionCheck(
     app.run()
 }
 
-private func printPermissionStatus() {
+private func permissionStatusJSON() -> String {
+    // Why: behind the lock screen macOS reports Accessibility as untrusted even when it is granted, so a lock at
+    // either end of the probes marks the whole answer as read while locked.
+    let lockedBefore = SessionLockProbe.isLocked()
     let snapshot = permissionStatusSnapshotSettled()
     let accessibility = snapshot.accessibilityGranted ? "granted" : "not-granted"
     let screenshots = snapshot.screenshotsGranted ? "granted" : "not-granted"
-    print(#"{"accessibility":"\#(accessibility)","screenshots":"\#(screenshots)"}"#)
+    let sessionLocked = lockedBefore || SessionLockProbe.isLocked()
+    return #"{"accessibility":"\#(accessibility)","screenshots":"\#(screenshots)","sessionLocked":\#(sessionLocked)}"#
+}
+
+private func printPermissionStatus() {
+    print(permissionStatusJSON())
 }
 
 private func writePermissionStatus(to path: String) {
-    let snapshot = permissionStatusSnapshotSettled()
-    let accessibility = snapshot.accessibilityGranted ? "granted" : "not-granted"
-    let screenshots = snapshot.screenshotsGranted ? "granted" : "not-granted"
-    let text = #"{"accessibility":"\#(accessibility)","screenshots":"\#(screenshots)"}"#
+    let text = permissionStatusJSON()
     do {
         try text.write(toFile: path, atomically: true, encoding: .utf8)
     } catch {
@@ -5094,6 +5211,10 @@ private func handleRequest(
     do {
         lock.lock()
         defer { lock.unlock() }
+        // Checked after waiting for the lock, since the screen can lock while another request runs.
+        if request.method != "handshake" && request.method != "listApps" && SessionLockProbe.isLocked() {
+            throw ProviderError.screenLocked
+        }
         let result = try provider.handle(method: request.method, params: request.params ?? [:])
         return ["id": request.id, "ok": true, "result": result]
     } catch let error as ProviderError {
