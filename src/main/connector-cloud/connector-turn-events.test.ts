@@ -64,12 +64,13 @@ describe('ConnectorTurnEvents', () => {
     }
     await ConnectorTurnEvents.settled()
     const { account, turnEnds: stored } = z
-      .object({ account: z.string(), turnEnds: z.array(z.unknown()) })
+      .object({ account: z.string(), turnEnds: z.array(z.object({ turnId: z.number() })) })
       .parse(JSON.parse(readFileSync(join(userDataPath, 'connector-turn-outbox.json'), 'utf8')))
     expect(account).toBe('ada')
-    expect(stored).toHaveLength(200)
-    expect(stored[0]).toMatchObject({ turnId: 1 })
-    expect(stored.at(-1)).toMatchObject({ turnId: 300 })
+    expect(stored.map(({ turnId }) => turnId)).toEqual([
+      ...Array.from({ length: 50 }, (_, index) => index + 1),
+      ...Array.from({ length: 150 }, (_, index) => index + 151)
+    ])
   })
 
   it('asks for a snapshot once the caps drop an event, until the next snapshot arrives', () => {
@@ -92,18 +93,15 @@ describe('ConnectorTurnEvents', () => {
     ])
   })
 
-  it('keeps a chat turn’s origin through a restart, so Orca-typed turns stay unmirrored', () => {
-    new ConnectorTurnEvents(userDataPath, 'ada').observe({ ...turnEnded(1), origin: 'local' })
-    expect(new ConnectorTurnEvents(userDataPath, 'ada').next(1)?.batch).toEqual([
-      expect.objectContaining({ turnId: 1, origin: 'local' })
-    ])
-  })
-
-  it('keeps a turn end’s pull request links through a restart', () => {
+  it('keeps a turn end’s origin and pull request links through a restart', () => {
     const links = [{ url: 'https://github.com/org/repo/pull/7', title: 'Pull request #7' }]
-    new ConnectorTurnEvents(userDataPath, 'ada').observe({ ...turnEnded(1), links })
+    new ConnectorTurnEvents(userDataPath, 'ada').observe({
+      ...turnEnded(1),
+      origin: 'local',
+      links
+    })
     expect(new ConnectorTurnEvents(userDataPath, 'ada').next(1)?.batch).toEqual([
-      expect.objectContaining({ turnId: 1, links })
+      expect.objectContaining({ turnId: 1, origin: 'local', links })
     ])
   })
 
