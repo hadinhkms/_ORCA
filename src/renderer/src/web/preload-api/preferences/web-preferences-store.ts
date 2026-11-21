@@ -147,6 +147,9 @@ export async function getRuntimeBackedStoredSettings(): Promise<GlobalSettings> 
     if (typeof result.settings.minimaxUsageModels === 'string') {
       runtimeSettings.minimaxUsageModels = result.settings.minimaxUsageModels
     }
+    if (typeof result.settings.geminiCliOAuthEnabled === 'boolean') {
+      runtimeSettings.geminiCliOAuthEnabled = result.settings.geminiCliOAuthEnabled
+    }
     if (zcodePlanSiteOwner(currentEnvironment) === requestedSiteOwner) {
       webRuntimeState.zcodePlanSiteRuntimeOwner = requestedSiteOwner
       const site = result.settings.zcodePlanSite
@@ -216,6 +219,9 @@ export async function syncRuntimeBackedSettings(
     }
     if (updates.minimaxEndpoint === 'overseas' || updates.minimaxEndpoint === 'cn') {
       runtimeUpdates.minimaxEndpoint = updates.minimaxEndpoint
+    }
+    if (typeof updates.geminiCliOAuthEnabled === 'boolean') {
+      runtimeUpdates.geminiCliOAuthEnabled = updates.geminiCliOAuthEnabled
     }
     if (Array.isArray(updates.prBotAuthorOverrides)) {
       runtimeUpdates.prBotAuthorOverrides = normalizePRBotAuthorOverrides(

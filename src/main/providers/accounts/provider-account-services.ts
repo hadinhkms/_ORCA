@@ -120,6 +120,11 @@ export function createProviderAccountServices(
         )
       })
     }
+    if ('geminiCliOAuthEnabled' in updates) {
+      void rateLimits.refresh().catch((error: unknown) => {
+        console.warn('[rate-limits] Failed to refresh Gemini usage after a settings change:', error)
+      })
+    }
   })
   rateLimits.setClaudeAuthPreparationResolver((target) =>
     claudeRuntimeAuth.prepareForRateLimitFetch(target)

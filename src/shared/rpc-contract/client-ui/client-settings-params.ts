@@ -140,6 +140,7 @@ export const SettingsUpdate = z
     minimaxUsageModels: z.string().optional(),
     minimaxEndpoint: z.enum(['overseas', 'cn']).optional(),
     zcodePlanSite: z.enum(['zai', 'bigmodel']).optional(),
+    geminiCliOAuthEnabled: z.boolean().optional(),
     githubProjects: GitHubProjectSettings.optional(),
     prBotAuthorOverrides: z
       .unknown()
