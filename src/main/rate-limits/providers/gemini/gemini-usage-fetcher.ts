@@ -178,7 +178,9 @@ async function fetchViaOauthCreds(
         ? Date.now() + refreshResult.expiresIn * 1000
         : creds.expiry_date
     }
-    await saveGeminiCredentials(currentCreds)
+    if (creds.source !== 'keychain') {
+      await saveGeminiCredentials(currentCreds)
+    }
   }
   const projectId = await loadProjectId(accessToken).catch(() => {
     return ''
@@ -204,13 +206,15 @@ async function fetchViaOauthCreds(
         return ''
       })
       if (newProjectId) {
-        await saveGeminiCredentials({
-          ...currentCreds,
-          access_token: refreshResult.accessToken,
-          expiry_date: refreshResult.expiresIn
-            ? Date.now() + refreshResult.expiresIn * 1000
-            : currentCreds.expiry_date
-        })
+        if (creds.source !== 'keychain') {
+          await saveGeminiCredentials({
+            ...currentCreds,
+            access_token: refreshResult.accessToken,
+            expiry_date: refreshResult.expiresIn
+              ? Date.now() + refreshResult.expiresIn * 1000
+              : currentCreds.expiry_date
+          })
+        }
         return fetchQuota(refreshResult.accessToken, newProjectId)
       }
     }

@@ -3,6 +3,7 @@ import { homedir } from 'node:os'
 import path from 'node:path'
 import { getMainHttpClient } from '../../../network/http-client'
 import { extractOAuthClientCredentials } from './gemini-cli-oauth-extractor'
+import { readGeminiKeychainCredentials } from './gemini-keychain-credentials'
 import { writeCredentialFileAtomic } from '../../../credentials/integration-credential-file'
 
 const API_TIMEOUT_MS = 10_000
@@ -14,6 +15,7 @@ export type GeminiCredentials = {
   access_token: string
   refresh_token: string
   expiry_date: number
+  source?: 'file' | 'keychain'
 }
 
 export type GoogleAuthEntry = {
@@ -67,22 +69,23 @@ export async function readGeminiCredentials(): Promise<GeminiCredentials | null>
       'expiry_date' in parsed &&
       typeof parsed.expiry_date === 'number'
     ) {
-      return parsed as GeminiCredentials
+      return { ...(parsed as GeminiCredentials), source: 'file' }
     }
-    return null
   } catch (err) {
-    if (err && typeof err === 'object' && 'code' in err && err.code === 'ENOENT') {
-      return null
+    if (!err || typeof err !== 'object' || !('code' in err) || err.code !== 'ENOENT') {
+      throw err
     }
-    throw err
   }
+
+  return readGeminiKeychainCredentials()
 }
 
 // Atomic replacement must preserve owner-only credentials despite orcad's login umask (#31125).
 export async function saveGeminiCredentials(creds: GeminiCredentials): Promise<void> {
+  const { source: _source, ...serializable } = creds
   await writeCredentialFileAtomic(
     OAUTH_CREDS_PATH,
-    Buffer.from(JSON.stringify(creds, null, 2), 'utf-8')
+    Buffer.from(JSON.stringify(serializable, null, 2), 'utf-8')
   )
 }
 
