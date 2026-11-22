@@ -35,6 +35,8 @@ import type { UiLanguageSettings } from '../i18n/ui-language-settings'
 import type { ChatDeleteSettings } from '../agent-session/chat-deletion/orca-chat-delete'
 
 type DesktopWindowSettings = {
+  /** Launch Orca in the system tray at OS login so the server is ready before opening a window. */
+  launchAtLogin?: boolean
   /** Windows-only: close (X) hides to tray instead of quitting; the tray icon is always present regardless. */
   minimizeToTrayOnClose?: boolean
   /** macOS: toggles the additive menu-bar entry (Orca survives last-window close); doesn't change Dock behavior. */

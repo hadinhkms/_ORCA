@@ -3,7 +3,10 @@ import type { CrashReportBreadcrumbData } from '../../../shared/crash-reporting/
 import { recordDurableCrashBreadcrumb } from '../../crash-reporting/breadcrumbs/durable-crash-breadcrumb'
 import { runWithLaunchPath } from '../shell-environment/hydrate-shell-path'
 import { getWindowsAdministratorRelaunchOptions } from '../../windows/windows-administrator-restart'
-import { BACKGROUND_OPEN_ARG } from '../../../shared/app-lifecycle/launch/background-open-argv'
+import {
+  BACKGROUND_OPEN_ARG,
+  START_IN_TRAY_ARG
+} from '../../../shared/app-lifecycle/launch/background-open-argv'
 
 export type AppRelaunchReason =
   | 'admin-restart'
@@ -27,11 +30,18 @@ export function relaunchApp(
 // The user restarted Orca, so the new window comes forward even when `orca open` started this one.
 function defaultRelaunchOptions(): Electron.RelaunchOptions | undefined {
   const administrator = getWindowsAdministratorRelaunchOptions()
-  if (!administrator && !process.argv.includes(BACKGROUND_OPEN_ARG)) {
+  if (
+    !administrator &&
+    !process.argv.includes(BACKGROUND_OPEN_ARG) &&
+    !process.argv.includes(START_IN_TRAY_ARG)
+  ) {
     return undefined
   }
   const args = administrator?.args ?? process.argv.slice(1)
-  return { ...administrator, args: args.filter((arg) => arg !== BACKGROUND_OPEN_ARG) }
+  return {
+    ...administrator,
+    args: args.filter((arg) => arg !== BACKGROUND_OPEN_ARG && arg !== START_IN_TRAY_ARG)
+  }
 }
 
 export async function runBeforeRelaunchCleanup(

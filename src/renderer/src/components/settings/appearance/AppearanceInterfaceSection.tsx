@@ -21,7 +21,12 @@ import {
   getTypographyEntries,
   getZoomEntries
 } from './appearance-search'
-import { getMenuBarIconEntries, getSystemTrayEntries } from './appearance-system-presence-search'
+import {
+  getLaunchAtLoginEntries,
+  getMenuBarIconEntries,
+  getSystemTrayEntries
+} from './appearance-system-presence-search'
+import { isWebClientLocation } from '@/app-shell/platform/web-client-location'
 import { SHOW_UI_LANGUAGE_SETTING } from '@/i18n/supported-languages'
 import { useTranslate } from '@/i18n/use-translate'
 import { matchesSettingsSearch, normalizeSettingsSearchQuery } from '../search/settings-search'
@@ -95,6 +100,8 @@ export function AppearanceInterfaceSection({
   const isSearching = normalizeSettingsSearchQuery(searchQuery).length > 0
   const zoomInKeyCombos = useShortcutKeyComboDetails('zoom.in')
   const zoomOutKeyCombos = useShortcutKeyComboDetails('zoom.out')
+  const showLaunchAtLogin = !isWebClientLocation()
+  const launchAtLoginEntry = getLaunchAtLoginEntries({ showLaunchAtLogin: true })[0]
   const menuBarIconEntry = getMenuBarIconEntries({ showMenuBarIcon: true })[0]
   const systemTrayEntry = getSystemTrayEntries({ showSystemTray: true })[0]
   const themeEntry = getThemeEntries()[0]
@@ -106,6 +113,7 @@ export function AppearanceInterfaceSection({
   const advancedEntries = [
     ...getTitlebarEntries(),
     ...getReduceVisualEffectsEntries(),
+    ...getLaunchAtLoginEntries({ showLaunchAtLogin }),
     ...getSystemTrayEntries({ showSystemTray: isDesktopWindows }),
     ...getMenuBarIconEntries({ showMenuBarIcon: isDesktopMac })
   ]
@@ -313,6 +321,26 @@ export function AppearanceInterfaceSection({
             enabled={settings.reduceVisualEffects === true}
             updateSettings={updateSettings}
           />
+
+          {showLaunchAtLogin ? (
+            <SearchableSetting
+              title={t('settings.appearance.launchAtLogin.title', 'Launch at login')}
+              description={launchAtLoginEntry?.description}
+              keywords={
+                launchAtLoginEntry?.keywords ?? ['login', 'startup', 'boot', 'server', 'tray']
+              }
+            >
+              <SettingsSwitchRow
+                label={t('settings.appearance.launchAtLogin.title', 'Launch at login')}
+                description={t(
+                  'settings.appearance.launchAtLogin.description',
+                  'Start Orca in the background when you log in so the server is ready. Click the app or tray icon to open the window.'
+                )}
+                checked={settings.launchAtLogin === true}
+                onChange={() => updateSettings({ launchAtLogin: !settings.launchAtLogin })}
+              />
+            </SearchableSetting>
+          ) : null}
 
           {isDesktopWindows ? (
             <SearchableSetting

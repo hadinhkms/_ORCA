@@ -11,6 +11,7 @@ import { recordProcessGoneCrash } from './main-window/main-window-lifecycle-flag
 import { handleGpuChildCrash } from './gpu-recovery/gpu-lifecycle'
 import { isGpuFallbackCrashCandidate } from '../crash-reporting/recovery/gpu-crash-fallback-decision'
 import { mainProcessState as state } from './main-process-state'
+import { syncLaunchAtLoginSetting } from '../window/desktop-integration/launch-at-login'
 import { initializeMainProcessObservers, startUsageBackend } from './main-process-observers'
 import { runAfterFirstWindowShown } from './main-window/first-window-deferral'
 import { startSpeechModelWarmup } from '../speech/speech-model-warmup'
@@ -122,6 +123,12 @@ export async function initializeReadyRuntimeServices(): Promise<void> {
   }
   // Renderers fork from zygotes that exist already, so this must land before the first window.
   await refuseRealtimeSchedulingUnderZeroRtTime()
+  syncLaunchAtLoginSetting(store.getSettings().launchAtLogin === true)
+  store.onSettingsChanged((updates) => {
+    if ('launchAtLogin' in updates) {
+      syncLaunchAtLoginSetting(updates.launchAtLogin === true)
+    }
+  })
   await composeDesktopCore(state.core, {
     store,
     paths: {

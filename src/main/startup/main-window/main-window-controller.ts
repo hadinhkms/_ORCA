@@ -46,7 +46,10 @@ import {
   applyServeDesktopWindowActivationPolicy
 } from '../../window/activation/foreground-activation-policy'
 import type { MainWindowOpenOptions } from '../../window/main-window/main-window-contracts'
-import { argvRequestsBackgroundOpen } from '../../../shared/app-lifecycle/launch/background-open-argv'
+import {
+  argvRequestsBackgroundOpen,
+  argvRequestsStartInTray
+} from '../../../shared/app-lifecycle/launch/background-open-argv'
 
 const TRAY_CREATE_FALLBACK_MS = 12_000
 const AGENT_STATE_CRASH_BREADCRUMB_MIN_INTERVAL_MS = 30_000
@@ -57,6 +60,8 @@ export async function openMainWindow(options: MainWindowOpenOptions = {}): Promi
   const revealInBackground =
     options.revealInBackground ??
     (!state.hasOpenedMainWindow && argvRequestsBackgroundOpen(process.argv))
+  const startInTray =
+    options.startInTray ?? (!state.hasOpenedMainWindow && argvRequestsStartInTray(process.argv))
   const { keybindings } = requireMainWindowServices({
     store: state.store,
     runtime: state.core.runtime,
@@ -149,6 +154,7 @@ export async function openMainWindow(options: MainWindowOpenOptions = {}): Promi
     deferLoad: true,
     ...(options.revealOnDidFinishLoad === true ? { revealOnDidFinishLoad: true } : {}),
     revealInBackground,
+    startInTray,
     title: state.devInstanceIdentity?.name ?? app.name,
     getKeybindings: () => keybindings.getOverrides(),
     onBeforeReload: ({ ignoreCache, webContentsId }) => {

@@ -79,9 +79,58 @@ const getMenuBarIconEntryCatalog = createLocalizedCatalog((): SettingsSearchEntr
   }
 ])
 
+const getLaunchAtLoginEntryCatalog = createLocalizedCatalog((): SettingsSearchEntry[] => [
+  {
+    title: translate('settings.appearance.launchAtLogin.title', 'Launch at login'),
+    description: translate(
+      'settings.appearance.launchAtLogin.description',
+      'Start Orca in the background when you log in so the server is ready. Click the app or tray icon to open the window.'
+    ),
+    keywords: [
+      ...translateSearchKeyword('settings.appearance.launchAtLogin.keyword.login', 'login', {
+        englishOnly: true
+      }),
+      ...translateSearchKeyword('settings.appearance.launchAtLogin.keyword.startup', 'startup', {
+        englishOnly: true
+      }),
+      ...translateSearchKeyword('settings.appearance.launchAtLogin.keyword.boot', 'boot', {
+        englishOnly: true
+      }),
+      ...translateSearchKeyword(
+        'settings.appearance.launchAtLogin.keyword.autostart',
+        'autostart',
+        {
+          englishOnly: true
+        }
+      ),
+      ...translateSearchKeyword('settings.appearance.launchAtLogin.keyword.server', 'server', {
+        englishOnly: true
+      }),
+      ...translateSearchKeyword('auto.components.settings.appearance.search.tray.tray', 'tray', {
+        englishOnly: true
+      }),
+      ...translateSearchKeyword(
+        'auto.components.settings.appearance.search.tray.background',
+        'background',
+        {
+          englishOnly: true
+        }
+      )
+    ]
+  }
+])
+
 type SystemPresenceSearchOptions = {
+  showLaunchAtLogin?: boolean
   showMenuBarIcon?: boolean
   showSystemTray?: boolean
+}
+
+export function getLaunchAtLoginEntries(
+  options: SystemPresenceSearchOptions = {}
+): SettingsSearchEntry[] {
+  const show = options.showLaunchAtLogin ?? !isWebClientLocation()
+  return show ? getLaunchAtLoginEntryCatalog() : []
 }
 
 export function getSystemTrayEntries(

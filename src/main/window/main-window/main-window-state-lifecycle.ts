@@ -20,6 +20,7 @@ export function installMainWindowStateLifecycle(args: {
   mainWindow: BrowserWindow
   revealOnDidFinishLoad: boolean
   revealInBackground?: boolean
+  startInTray?: boolean
   savedMaximized: boolean
   savedFullScreen: boolean
   nativeSettings: NativeSettingsProjection | null
@@ -28,6 +29,7 @@ export function installMainWindowStateLifecycle(args: {
     mainWindow,
     revealOnDidFinishLoad,
     revealInBackground = false,
+    startInTray = false,
     savedMaximized,
     savedFullScreen,
     nativeSettings
@@ -73,6 +75,16 @@ export function installMainWindowStateLifecycle(args: {
 
     // Keep headless E2E off screen; Playwright uses CDP.
     if (isWindowlessLaunch()) {
+      return
+    }
+    if (startInTray) {
+      if (savedMaximized) {
+        mainWindow.once('show', () => {
+          if (!mainWindow.isDestroyed() && !mainWindow.isMaximized()) {
+            mainWindow.maximize()
+          }
+        })
+      }
       return
     }
     if (revealInBackground) {

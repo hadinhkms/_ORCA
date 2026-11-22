@@ -13,19 +13,13 @@ git checkout -- ":(glob)mobile/**/.gradle/**" >nul 2>&1
 
 set "DID_STASH=0"
 set "STASH_POP_ERR=0"
-set "STASH_BEFORE="
-for /f "tokens=*" %%s in ('git rev-parse -q --verify refs/stash 2^>nul') do set "STASH_BEFORE=%%s"
 
 git status --porcelain -- . ":(exclude)sync_upstream.bat" | findstr . >nul
 if not errorlevel 1 (
     echo [0/4] Dang tam luu cac thay doi local ^(git stash -u^)...
     git stash push -u -m "sync_upstream auto-stash" -- . ":(exclude)sync_upstream.bat"
     if errorlevel 1 goto :err_stash
-    set "STASH_AFTER="
-    for /f "tokens=*" %%s in ('git rev-parse -q --verify refs/stash 2^>nul') do set "STASH_AFTER=%%s"
-    if defined STASH_AFTER (
-        if not "!STASH_AFTER!"=="!STASH_BEFORE!" set "DID_STASH=1"
-    )
+    set "DID_STASH=1"
 )
 
 for /f "tokens=*" %%i in ('git branch --show-current') do set "CURRENT_BRANCH=%%i"
@@ -87,7 +81,7 @@ echo [LOI] Push len origin main that bai!
 goto :error
 
 :restore_stash
-if "%DID_STASH%"=="1" (
+if "!DID_STASH!"=="1" (
     echo [4/4] Dang khoi phuc cac thay doi local tu stash...
     git stash pop
     if errorlevel 1 (

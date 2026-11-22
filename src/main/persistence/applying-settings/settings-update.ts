@@ -72,6 +72,9 @@ export function updateSettings(
     sanitizedUpdates.windowBackgroundBlur = windowMaterial !== 'off'
   }
   // Normalize at the store boundary so every writer rejects truthy non-booleans.
+  if ('launchAtLogin' in updates) {
+    sanitizedUpdates.launchAtLogin = updates.launchAtLogin === true
+  }
   if ('minimizeToTrayOnClose' in updates) {
     sanitizedUpdates.minimizeToTrayOnClose = updates.minimizeToTrayOnClose === true
   }

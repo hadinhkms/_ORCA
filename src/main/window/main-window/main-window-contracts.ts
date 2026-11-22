@@ -15,7 +15,7 @@ export type MainWindowLoadObserver = {
 
 export type MainWindowOpenOptions = Pick<
   CreateMainWindowOptions,
-  'revealOnDidFinishLoad' | 'revealInBackground'
+  'revealOnDidFinishLoad' | 'revealInBackground' | 'startInTray'
 > & { loadObserver?: MainWindowLoadObserver }
 
 export type CreateMainWindowOptions = {
@@ -50,6 +50,8 @@ export type CreateMainWindowOptions = {
   revealOnDidFinishLoad?: boolean
   /** Show without taking the foreground: `orca open` asked, not the user. */
   revealInBackground?: boolean
+  /** Keep the initial window hidden in the system tray when launched at OS login. */
+  startInTray?: boolean
   title?: string
   getKeybindings?: () => KeybindingOverrides | undefined
   onBeforeReload?: (options: { ignoreCache: boolean; webContentsId: number }) => void

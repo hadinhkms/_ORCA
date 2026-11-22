@@ -217,6 +217,7 @@ export function createMainWindow(
     mainWindow,
     revealOnDidFinishLoad: opts?.revealOnDidFinishLoad === true,
     revealInBackground: opts?.revealInBackground,
+    startInTray: opts?.startInTray === true,
     savedMaximized,
     savedFullScreen,
     nativeSettings
