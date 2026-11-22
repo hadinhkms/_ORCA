@@ -11,11 +11,22 @@ echo =======================================================
 REM Tu dong bo qua cac file cache/lock .gradle bi thay doi trong mobile/
 git checkout -- ":(glob)mobile/**/.gradle/**" >nul 2>&1
 
-git diff --quiet
-if errorlevel 1 goto :err_working_tree
+set "DID_STASH=0"
+set "STASH_POP_ERR=0"
+set "STASH_BEFORE="
+for /f "tokens=*" %%s in ('git rev-parse -q --verify refs/stash 2^>nul') do set "STASH_BEFORE=%%s"
 
-git diff --cached --quiet
-if errorlevel 1 goto :err_staged_changes
+git status --porcelain -- . ":(exclude)sync_upstream.bat" | findstr . >nul
+if not errorlevel 1 (
+    echo [0/4] Dang tam luu cac thay doi local ^(git stash -u^)...
+    git stash push -u -m "sync_upstream auto-stash" -- . ":(exclude)sync_upstream.bat"
+    if errorlevel 1 goto :err_stash
+    set "STASH_AFTER="
+    for /f "tokens=*" %%s in ('git rev-parse -q --verify refs/stash 2^>nul') do set "STASH_AFTER=%%s"
+    if defined STASH_AFTER (
+        if not "!STASH_AFTER!"=="!STASH_BEFORE!" set "DID_STASH=1"
+    )
+)
 
 for /f "tokens=*" %%i in ('git branch --show-current') do set "CURRENT_BRANCH=%%i"
 if not "%CURRENT_BRANCH%"=="main" (
@@ -24,7 +35,7 @@ if not "%CURRENT_BRANCH%"=="main" (
     if errorlevel 1 goto :err_checkout
 )
 
-echo [1/3] Dang fetch tu upstream...
+echo [1/4] Dang fetch tu upstream...
 git fetch upstream
 if errorlevel 1 goto :err_fetch
 
@@ -37,26 +48,25 @@ if "%BASE_REV%"=="%UPSTREAM_REV%" (
     goto :check_push
 )
 
-echo [2/3] Dang merge upstream/main vao main...
-git merge upstream/main --no-edit
+echo [2/4] Dang merge upstream/main vao main ^(giu local neu conflict^)...
+git merge upstream/main -X ours --no-edit
 if errorlevel 1 goto :err_merge
 
 :check_push
-echo [3/3] Dang push len origin main...
+echo [3/4] Dang push len origin main...
 git push origin main
 if errorlevel 1 goto :err_push
+
+call :restore_stash
+if "!STASH_POP_ERR!"=="1" goto :error
 
 echo =======================================================
 echo [THANH CONG] Dong bo hoan tat luc %date% %time%!
 echo =======================================================
 goto :end
 
-:err_working_tree
-echo [CANH BAO] Co file bi thay doi trong working tree. Khong the tu dong merge.
-goto :error
-
-:err_staged_changes
-echo [CANH BAO] Co file da staged chua commit. Khong the tu dong merge.
+:err_stash
+echo [LOI] Khong the stash cac thay doi local!
 goto :error
 
 :err_checkout
@@ -68,15 +78,29 @@ echo [LOI] Fetch upstream that bai!
 goto :error
 
 :err_merge
-echo [LOI] Xung dot (conflict) khi merge!
-echo Vui long mo IDE xu ly xung dot thu cong.
+echo [LOI] Xung dot ^(conflict^) khi merge ke ca voi -X ours!
+git merge --abort >nul 2>&1
 goto :error
 
 :err_push
 echo [LOI] Push len origin main that bai!
 goto :error
 
+:restore_stash
+if "%DID_STASH%"=="1" (
+    echo [4/4] Dang khoi phuc cac thay doi local tu stash...
+    git stash pop
+    if errorlevel 1 (
+        echo [CANH BAO] Co xung dot khi khoi phuc file local tu stash.
+        echo Cac thay doi van duoc giu an toan trong git stash. Vui long kiem tra lai trong IDE.
+        set "STASH_POP_ERR=1"
+    )
+    set "DID_STASH=0"
+)
+exit /b 0
+
 :error
+call :restore_stash
 echo =======================================================
 echo [THAT BAI] Qua trinh dong bo gap loi!
 echo =======================================================
