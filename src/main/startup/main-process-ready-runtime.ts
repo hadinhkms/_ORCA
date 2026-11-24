@@ -14,6 +14,7 @@ import { recordProcessGoneCrash } from './main-window/main-window-lifecycle-flag
 import { handleGpuChildCrash } from './gpu-recovery/gpu-lifecycle'
 import { isGpuFallbackCrashCandidate } from '../crash-reporting/recovery/gpu-crash-fallback-decision'
 import { mainProcessState as state } from './main-process-state'
+import { isNativeUpdateInstallUnderWay } from '../updater/updater-service'
 import { syncLaunchAtLoginSetting } from '../window/desktop-integration/launch-at-login'
 import { initializeMainProcessObservers, startUsageBackend } from './main-process-observers'
 import { runAfterFirstWindowShown } from './main-window/first-window-deferral'

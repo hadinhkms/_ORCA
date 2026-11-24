@@ -50,6 +50,12 @@ if not exist "%~dp0out\cli\index.js" (
     "!NODE_BIN!" "%~dp0config\scripts\cli-build\verify-cli-bin.mjs" --fix-executable --fix-package-json >> "%~dp0start-dashboard-web.log" 2>&1
     if errorlevel 1 exit /b %errorlevel%
 )
+REM Orca Mobile loads its workspace UI from this bundle; without it the phone says "Update Orca".
+if not exist "%~dp0out\mobile-web\manifest.json" (
+    echo [%date% %time%] Building out\mobile-web bundle ... >> "%~dp0start-dashboard-web.log"
+    "!NODE_BIN!" "%~dp0config\scripts\build\mobile-web-app\build-mobile-web-app-bundle.mjs" >> "%~dp0start-dashboard-web.log" 2>&1
+    if errorlevel 1 exit /b %errorlevel%
+)
 "!NODE_BIN!" "%~dp0config\scripts\native-build\node-addons\ensure-native-runtime.mjs" --runtime=electron >> "%~dp0start-dashboard-web.log" 2>&1
 if errorlevel 1 exit /b %errorlevel%
 "!NODE_BIN!" "%~dp0config\scripts\development\launch\run-electron-vite-dev.mjs" -- --orca-start-in-tray >> "%~dp0start-dashboard-web.log" 2>&1
