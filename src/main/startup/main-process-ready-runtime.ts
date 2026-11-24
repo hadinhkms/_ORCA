@@ -86,6 +86,7 @@ function startThemeAndSpeech(store: Store, fallbackMs: number): void {
 function desktopCoreNative(store: Store): DesktopCoreNative {
   return {
     isQuitting: () => state.isQuitting,
+    isNativeUpdateInstallUnderWay,
     isServeMode: () => state.isServeMode,
     servedOrcaProfileId: () => state.activeOrcaProfile?.profile.id,
     openExternal: (url) => shell.openExternal(url),
