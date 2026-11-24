@@ -47,6 +47,12 @@ run_host() {
     node config/scripts/cli-build/verify-cli-bin.mjs --fix-executable --fix-package-json
   fi
 
+  # Orca Mobile loads its workspace UI from this bundle; without it the phone says "Update Orca".
+  if [[ ! -f out/mobile-web/manifest.json ]]; then
+    echo "Building out/mobile-web bundle ..."
+    node config/scripts/build/mobile-web-app/build-mobile-web-app-bundle.mjs
+  fi
+
   node config/scripts/native-build/node-addons/ensure-native-runtime.mjs --runtime=electron
   exec node config/scripts/development/launch/run-electron-vite-dev.mjs -- --orca-start-in-tray
 }
