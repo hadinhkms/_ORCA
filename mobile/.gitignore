@@ -16,3 +16,6 @@ dist/
 *.mobileprovision
 *.orig.*
 web-build/
+
+# Gradle build cache (regenerated on every Android build)
+.gradle/
