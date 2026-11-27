@@ -108,7 +108,6 @@ export class RuntimeClientSettingsController {
       minimaxUsageModels: settings.minimaxUsageModels ?? 'general',
       minimaxEndpoint: settings.minimaxEndpoint ?? 'overseas',
       zcodePlanSite: settings.zcodePlanSite ?? 'zai',
-      geminiCliOAuthEnabled: settings.geminiCliOAuthEnabled === true,
       prBotAuthorOverrides: settings.prBotAuthorOverrides ?? [],
       // Paired clients order their Source Control lists the way this desktop does.
       sourceControlGroupOrder: normalizeSourceControlGroupOrder(settings.sourceControlGroupOrder),

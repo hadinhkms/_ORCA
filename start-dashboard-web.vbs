@@ -34,7 +34,8 @@ If Not IsHostReady() Then
     WshShell.Run cmd, 0, False
     If shouldOpen Then
         WScript.Sleep 1500
-        For i = 1 To 120
+        ' First run after a pull rebuilds Electron (often >1 min); wait up to ~5 min.
+        For i = 1 To 600
             If IsHostReady() Then
                 Exit For
             End If

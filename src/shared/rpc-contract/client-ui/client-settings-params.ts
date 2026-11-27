@@ -114,73 +114,65 @@ const HostNotificationSettingsUpdate = lazyZodSchema(() =>
     .strict()
 )
 
-const HostNotificationSettingsUpdate = z
-  .object({
-    enabled: z.boolean().optional(),
-    agentTaskComplete: z.boolean().optional(),
-    agentNeedsInput: z.boolean().optional(),
-    terminalBell: z.boolean().optional()
-  })
-  .strict()
-
-export const SettingsUpdate = z
-  .object({
-    ...HOST_OWNED_SETTING_UPDATE_SHAPE,
-    machineName: z.string().trim().max(MACHINE_NAME_MAX_LENGTH).optional(),
-    worktreeVisibilityDefaults: WorktreeVisibilityDefaultsUpdate.optional(),
-    defaultTuiAgent: z
-      .unknown()
-      .transform((value) =>
-        value === null || value === 'blank' || isTuiAgent(value) ? value : undefined
-      )
-      .optional(),
-    disabledTuiAgents: z
-      .unknown()
-      .transform((value) => normalizeDisabledTuiAgents(value))
-      .optional(),
-    agentDefaultArgs: z
-      .unknown()
-      .transform((value) => normalizeTuiAgentArgsRecord(value))
-      .optional(),
-    agentDefaultEnv: z
-      .unknown()
-      .transform((value) => normalizeTuiAgentEnvRecord(value))
-      .optional(),
-    defaultTaskSource: TaskProviderParam.optional(),
-    visibleTaskProviders: z.array(TaskProviderParam).optional(),
-    defaultTaskViewPreset: z
-      .enum(['issues', 'my-issues', 'prs', 'my-prs', 'review', 'all'])
-      .optional(),
-    experimentalNewWorktreeCardStyle: z.boolean().optional(),
-    worktreeCardDetailsRow: z.boolean().optional(),
-    /** The host-side switch for bots, so a headless server can turn them on. */
-    botsEnabled: z.boolean().optional(),
-    agentStatusHooksEnabled: z.boolean().optional(),
-    claudeSubagentNavigationEnabled: z.boolean().optional(),
-    defaultRepoSelection: z.array(z.string()).nullable().optional(),
-    defaultLinearTeamSelection: z.array(z.string()).nullable().optional(),
-    compactWorktreeCards: z.boolean().optional(),
-    minimaxGroupId: z.string().optional(),
-    minimaxUsageModels: z.string().optional(),
-    minimaxEndpoint: z.enum(['overseas', 'cn']).optional(),
-    zcodePlanSite: z.enum(['zai', 'bigmodel']).optional(),
-    geminiCliOAuthEnabled: z.boolean().optional(),
-    githubProjects: GitHubProjectSettings.optional(),
-    prBotAuthorOverrides: z
-      .unknown()
-      .transform((value) => normalizePRBotAuthorOverrides(value))
-      .optional(),
-    nativeChatResumeWorkOnRestart: z.boolean().optional(),
-    nativeChatPermissionMode: z.enum(AGENT_CHAT_PERMISSION_MODES).optional(),
-    nativeChatQueueFollowUps: z.boolean().optional(),
-    nativeChatCiResultLines: z.boolean().optional(),
-    nativeChatAutoName: z.boolean().optional(),
-    /** This host's own notification switches; see HOST_NOTIFICATION_SETTINGS_RUNTIME_CAPABILITY. */
-    hostNotifications: HostNotificationSettingsUpdate.optional(),
-    workspaceCleanupPolicy: WorkspaceCleanupRulesParam.optional(),
-    prAutoRefresh: z.enum(PR_AUTO_REFRESH_CADENCES).optional(),
-    newTabMenuLayout: z.unknown().transform(normalizeNewTabMenuLayout).optional(),
-    floatingTerminalNewTabMenuLayout: z.unknown().transform(normalizeNewTabMenuLayout).optional()
-  })
-  .strict()
-  .default({})
+export const SettingsUpdate = lazyZodSchema(() =>
+  z
+    .object({
+      ...HOST_OWNED_SETTING_UPDATE_SHAPE,
+      machineName: z.string().trim().max(MACHINE_NAME_MAX_LENGTH).optional(),
+      worktreeVisibilityDefaults: WorktreeVisibilityDefaultsUpdate.optional(),
+      defaultTuiAgent: z
+        .unknown()
+        .transform((value) =>
+          value === null || value === 'blank' || isTuiAgent(value) ? value : undefined
+        )
+        .optional(),
+      disabledTuiAgents: z
+        .unknown()
+        .transform((value) => normalizeDisabledTuiAgents(value))
+        .optional(),
+      agentDefaultArgs: z
+        .unknown()
+        .transform((value) => normalizeTuiAgentArgsRecord(value))
+        .optional(),
+      agentDefaultEnv: z
+        .unknown()
+        .transform((value) => normalizeTuiAgentEnvRecord(value))
+        .optional(),
+      defaultTaskSource: TaskProviderParam.optional(),
+      visibleTaskProviders: z.array(TaskProviderParam).optional(),
+      defaultTaskViewPreset: z
+        .enum(['issues', 'my-issues', 'prs', 'my-prs', 'review', 'all'])
+        .optional(),
+      experimentalNewWorktreeCardStyle: z.boolean().optional(),
+      worktreeCardDetailsRow: z.boolean().optional(),
+      /** The host-side switch for bots, so a headless server can turn them on. */
+      botsEnabled: z.boolean().optional(),
+      agentStatusHooksEnabled: z.boolean().optional(),
+      claudeSubagentNavigationEnabled: z.boolean().optional(),
+      defaultRepoSelection: z.array(z.string()).nullable().optional(),
+      defaultLinearTeamSelection: z.array(z.string()).nullable().optional(),
+      compactWorktreeCards: z.boolean().optional(),
+      minimaxGroupId: z.string().optional(),
+      minimaxUsageModels: z.string().optional(),
+      minimaxEndpoint: z.enum(['overseas', 'cn']).optional(),
+      zcodePlanSite: z.enum(['zai', 'bigmodel']).optional(),
+      githubProjects: GitHubProjectSettings.optional(),
+      prBotAuthorOverrides: z
+        .unknown()
+        .transform((value) => normalizePRBotAuthorOverrides(value))
+        .optional(),
+      nativeChatResumeWorkOnRestart: z.boolean().optional(),
+      nativeChatPermissionMode: z.enum(AGENT_CHAT_PERMISSION_MODES).optional(),
+      nativeChatQueueFollowUps: z.boolean().optional(),
+      nativeChatCiResultLines: z.boolean().optional(),
+      nativeChatAutoName: z.boolean().optional(),
+      /** This host's own notification switches; see HOST_NOTIFICATION_SETTINGS_RUNTIME_CAPABILITY. */
+      hostNotifications: HostNotificationSettingsUpdate.optional(),
+      workspaceCleanupPolicy: WorkspaceCleanupRulesParam.optional(),
+      prAutoRefresh: z.enum(PR_AUTO_REFRESH_CADENCES).optional(),
+      newTabMenuLayout: z.unknown().transform(normalizeNewTabMenuLayout).optional(),
+      floatingTerminalNewTabMenuLayout: z.unknown().transform(normalizeNewTabMenuLayout).optional()
+    })
+    .strict()
+    .default({})
+)
