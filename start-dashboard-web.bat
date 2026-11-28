@@ -54,7 +54,7 @@ REM Orca Mobile loads its workspace UI from this bundle; without it the phone sa
 if not exist "%~dp0out\mobile-web\manifest.json" (
     echo [%date% %time%] Building out\mobile-web bundle ... >> "%~dp0start-dashboard-web.log"
     "!NODE_BIN!" "%~dp0config\scripts\build\mobile-web-app\build-mobile-web-app-bundle.mjs" >> "%~dp0start-dashboard-web.log" 2>&1
-    if errorlevel 1 exit /b %errorlevel%
+    if errorlevel 1 echo [%date% %time%] WARNING: mobile-web bundle build failed; Web still starts, Orca Mobile will say "Update Orca". >> "%~dp0start-dashboard-web.log"
 )
 "!NODE_BIN!" "%~dp0config\scripts\native-build\node-addons\ensure-native-runtime.mjs" --runtime=electron >> "%~dp0start-dashboard-web.log" 2>&1
 if errorlevel 1 exit /b %errorlevel%

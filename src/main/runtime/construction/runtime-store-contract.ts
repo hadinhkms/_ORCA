@@ -196,7 +196,6 @@ export type RuntimeStore = {
     minimaxUsageModels?: GlobalSettings['minimaxUsageModels']
     minimaxEndpoint?: GlobalSettings['minimaxEndpoint']
     zcodePlanSite?: GlobalSettings['zcodePlanSite']
-    geminiCliOAuthEnabled?: GlobalSettings['geminiCliOAuthEnabled']
     prBotAuthorOverrides?: GlobalSettings['prBotAuthorOverrides']
     sourceControlGroupOrder?: GlobalSettings['sourceControlGroupOrder']
     sourceControlCompareAgainstUpstream?: GlobalSettings['sourceControlCompareAgainstUpstream']
