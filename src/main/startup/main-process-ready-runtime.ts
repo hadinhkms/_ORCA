@@ -4,7 +4,6 @@ import { AgentBrowserBridge } from '../browser/agent-browser/agent-browser-bridg
 import { browserManager } from '../browser/guest-lifecycle/manager/browser-manager'
 import { browserSessionRegistry } from '../browser/sessions/profiles/browser-session-registry'
 import { configureBrowserClientPageAutomationRuntime } from '../browser/client-pages/execution/browser-client-page-automation-runtime'
-import { openOffscreenBrowserPageLink } from '../runtime/browser/commands/offscreen-browser-page-link'
 import {
   readLiveProcessMetricDetails,
   startPreGoneCrashSampling
@@ -15,7 +14,6 @@ import {
 } from '../memory/main-memory-spike-capture'
 import { registeredPtyCount } from '../memory/pty-registry'
 import { getStructuredAgentSessionHost } from '../native-chat/agent-session-wire/host/structured-agent-session-registry'
-import { refuseRealtimeSchedulingUnderZeroRtTime } from './linux-runtime/linux-realtime-scheduling-guard'
 import { recordProcessGoneCrash } from './main-window/main-window-lifecycle-flags'
 import { isGpuFallbackCrashCandidate } from '../crash-reporting/recovery/gpu-crash-fallback-decision'
 import { mainProcessState as state } from './main-process-state'
@@ -145,12 +143,14 @@ function desktopCoreNative(store: Store): DesktopCoreNative {
       browserManager.setBrowserGuestStateChangedListener((worktreeId) => {
         runtime.notifyMobileSessionTabsChanged(worktreeId)
       })
-      browserManager.setOffscreenTabOpener((request) =>
-        openOffscreenBrowserPageLink(
+      browserManager.setOffscreenTabOpener(async (request) => {
+        const { openOffscreenBrowserPageLink } =
+          await import('../runtime/browser/commands/offscreen-browser-page-link')
+        return openOffscreenBrowserPageLink(
           (params, caller) => runtime.browserTabCreate(params, caller),
           request
         )
-      )
+      })
       browserManager.setServerPagePopupPresenter((popup) => {
         void runtime.showServerPagePopupToClient(popup).catch((error: unknown) => {
           console.warn('[browser] could not show a page popup to its client:', error)

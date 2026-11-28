@@ -186,6 +186,7 @@ export function buildDefaultSettings(args: {
     showTitlebarAppName: true,
     linuxTilingWindowMode: false,
     showTasksButton: true,
+    showStatusBarMemory: true,
     showAutomationsButton: true,
     artifactsEnabled: true,
     // New profiles only; stored profiles without the key load as false (normalizeLoadedGlobalSettings).
@@ -205,7 +206,6 @@ export function buildDefaultSettings(args: {
     terminalShortcutPolicy: 'orca-first',
     floatingTerminalEnabled: true,
     browserClientHostedRemoteEnabled: true,
-    antigravityManagedAgyEnabled: true,
     antigravityServerAutoUpdateEnabled: true,
     floatingTerminalDefaultedForAllUsers: true,
     floatingTerminalCwd: '~',

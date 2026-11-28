@@ -260,6 +260,7 @@ export function getTilingWindowModeEntry(t: Translate = translate): SettingsSear
 export const getStatusBarEntries = createLocalizedCatalog((): SettingsSearchEntry[] => [
   getUsagePercentageDisplayEntry(),
   getStatusBarUsageFormatEntry(),
+  getStatusBarMemoryEntry(),
   ...getStatusBarToggles().map(({ title, description, keywords }) => ({
     title,
     description,

@@ -8,6 +8,7 @@ import type { BrowserPasswordsGlobalSettings } from '../browser/passwords/browse
 import type { BrowserMemorySaverGlobalSettings } from '../browser/guest-lifecycle/browser-memory-saver'
 import type { PerfNoticeGlobalSettings } from '../perf-notices/perf-notice-settings'
 import type { ClaudeAccountSwitchSettings } from '../agent-accounts/claude/claude-account-switch-settings'
+import type { AntigravityAccountSwitchSettings } from '../agent-accounts/antigravity/antigravity-account-switch-settings'
 import type { NativeChatGlobalSettings } from '../native-chat/settings/native-chat-appearance-settings'
 import type { NativeChatIdleStopSettings } from '../native-chat/settings/native-chat-idle-stop'
 import type { SharedCodexServersSettings } from '../native-chat/settings/native-chat-shared-codex-servers'
@@ -34,6 +35,7 @@ import type { ManagedAccountNameSettings } from '../agent-accounts/managed-accou
 import type { NewTabMenuSettings } from '../new-tab-menu/new-tab-menu-layout'
 import type { UiLanguageSettings } from '../i18n/ui-language-settings'
 import type { ChatDeleteSettings } from '../agent-session/chat-deletion/orca-chat-delete'
+import type { StatusBarMemorySettings } from '../diagnostics/status-bar-memory-settings'
 
 type DesktopWindowSettings = {
   /** Launch Orca in the system tray at OS login so the server is ready before opening a window. */
@@ -58,6 +60,7 @@ export type GlobalSettingsBase = AntigravityChatAuthSettings &
   WorktreeDeletionPreferences &
   WorktreeCardDisplaySettings &
   ClaudeAccountSwitchSettings &
+  AntigravityAccountSwitchSettings &
   AgentPermissionGlobalSettings &
   BrowserLinkOpeningSettings &
   BrowserExtensionGlobalSettings &
@@ -83,4 +86,5 @@ export type GlobalSettingsBase = AntigravityChatAuthSettings &
   ManagedAccountNameSettings &
   NewTabMenuSettings &
   UiLanguageSettings &
-  ChatDeleteSettings
+  ChatDeleteSettings &
+  StatusBarMemorySettings
