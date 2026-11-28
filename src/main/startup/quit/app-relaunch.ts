@@ -44,6 +44,11 @@ function defaultRelaunchOptions(): Electron.RelaunchOptions | undefined {
   }
 }
 
+/** Same-profile relaunches only: CLI callers in surviving terminals then wait instead of reopening Orca. */
+export async function announceRuntimeRelaunch(): Promise<void> {
+  await writeRuntimeRestartMarker(getCanonicalUserDataPath(), 'relaunch')
+}
+
 export async function runBeforeRelaunchCleanup(
   onBeforeRelaunch?: () => void | Promise<void>
 ): Promise<void> {
