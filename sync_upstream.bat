@@ -29,9 +29,19 @@ if not "%CURRENT_BRANCH%"=="main" (
     if errorlevel 1 goto :err_checkout
 )
 
-echo [1/4] Dang fetch tu upstream...
+echo [1/4] Dang fetch tu origin va upstream...
+git fetch origin
+if errorlevel 1 goto :err_fetch_origin
 git fetch upstream
 if errorlevel 1 goto :err_fetch
+
+for /f "tokens=*" %%o in ('git rev-parse origin/main') do set "ORIGIN_REV=%%o"
+for /f "tokens=*" %%m in ('git merge-base HEAD origin/main') do set "ORIGIN_BASE_REV=%%m"
+if not "%ORIGIN_BASE_REV%"=="%ORIGIN_REV%" (
+    echo [2a/4] Dang merge origin/main vao main...
+    git merge origin/main --no-edit
+    if errorlevel 1 goto :err_merge_origin
+)
 
 for /f "tokens=*" %%a in ('git rev-parse HEAD') do set "LOCAL_REV=%%a"
 for /f "tokens=*" %%b in ('git rev-parse upstream/main') do set "UPSTREAM_REV=%%b"
@@ -67,8 +77,17 @@ goto :error
 echo [LOI] Khong the chuyen sang nhanh main!
 goto :error
 
+:err_fetch_origin
+echo [LOI] Fetch origin that bai!
+goto :error
+
 :err_fetch
 echo [LOI] Fetch upstream that bai!
+goto :error
+
+:err_merge_origin
+echo [LOI] Xung dot ^(conflict^) khi merge origin/main vao main!
+git merge --abort >nul 2>&1
 goto :error
 
 :err_merge
